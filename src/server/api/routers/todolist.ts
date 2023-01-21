@@ -21,4 +21,27 @@ export const todolistRouter = createTRPCRouter({
 
       return newTodolist;
     }),
+  deleteTodolist: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const deleteResponse = await ctx.prisma.todolist.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (deleteResponse) {
+        return {
+          status: 200,
+        };
+      }
+
+      return {
+        status: 404,
+      };
+    }),
 });

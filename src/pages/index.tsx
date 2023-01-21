@@ -9,7 +9,11 @@ const Home: NextPage = () => {
 
   const apiContext = api.useContext();
   const createTodoInput = useRef<HTMLInputElement | null>(null);
-
+  const deleteTodo = api.todolists.deleteTodolist.useMutation({
+    async onSuccess() {
+      await apiContext.todolists.getAll.invalidate();
+    },
+  });
   const todolistsMutation = api.todolists.createTodolist.useMutation({
     async onSuccess() {
       await apiContext.todolists.getAll.invalidate();
@@ -29,6 +33,12 @@ const Home: NextPage = () => {
       });
   };
 
+  const handleDeleteTodo =
+    (id: string) => (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+
+      deleteTodo.mutate({ id });
+    };
   return (
     <>
       <Head>
@@ -48,14 +58,25 @@ const Home: NextPage = () => {
           <button
             className="border border-white p-2"
             onClick={handleCreateTodo}
+            type="button"
           >
             <span className="text-white">Create Todolist</span>
           </button>
 
           {allTodoLists.data?.map((todoList) => {
             return (
-              <p className="text-2xl text-white" key={todoList.id}>
-                {todoList.title}
+              <p
+                className="flex items-center gap-x-4 text-2xl text-white"
+                key={todoList.id}
+              >
+                <span>{todoList.title}</span>
+                <button
+                  className="border border-white p-2"
+                  type="button"
+                  onClick={handleDeleteTodo(todoList.id)}
+                >
+                  Delete
+                </button>
               </p>
             );
           })}
