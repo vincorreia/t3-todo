@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { type MouseEvent, useRef } from "react";
+import { Row } from "../components/molecules/Row";
 
 import { api } from "../utils/api";
 
@@ -8,15 +9,27 @@ const Home: NextPage = () => {
   const allTodoLists = api.todolists.getAll.useQuery();
 
   const apiContext = api.useContext();
+
   const createTodoInput = useRef<HTMLInputElement | null>(null);
+
+  const invalidateGetAll = async () =>
+    await apiContext.todolists.getAll.invalidate();
+
   const deleteTodo = api.todolists.deleteTodolist.useMutation({
     async onSuccess() {
-      await apiContext.todolists.getAll.invalidate();
+      await invalidateGetAll();
     },
   });
+
+  const editTodo = api.todolists.editTodolist.useMutation({
+    async onSuccess() {
+      await invalidateGetAll();
+    },
+  });
+
   const todolistsMutation = api.todolists.createTodolist.useMutation({
     async onSuccess() {
-      await apiContext.todolists.getAll.invalidate();
+      await invalidateGetAll();
       if (createTodoInput.current) {
         createTodoInput.current.value = "";
       }
@@ -33,12 +46,17 @@ const Home: NextPage = () => {
       });
   };
 
-  const handleDeleteTodo =
-    (id: string) => (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
+  const handleDeleteTodo = (id: string) => () => {
+    deleteTodo.mutate({ id });
+  };
 
-      deleteTodo.mutate({ id });
-    };
+  const confirmEditTodolist = (id: string) => (title: string) => {
+    editTodo.mutate({
+      id,
+      title,
+    });
+  };
+
   return (
     <>
       <Head>
@@ -65,19 +83,12 @@ const Home: NextPage = () => {
 
           {allTodoLists.data?.map((todoList) => {
             return (
-              <p
-                className="flex items-center gap-x-4 text-2xl text-white"
+              <Row
+                item={todoList}
                 key={todoList.id}
-              >
-                <span>{todoList.title}</span>
-                <button
-                  className="border border-white p-2"
-                  type="button"
-                  onClick={handleDeleteTodo(todoList.id)}
-                >
-                  Delete
-                </button>
-              </p>
+                handleDelete={handleDeleteTodo}
+                confirmEdit={confirmEditTodolist}
+              />
             );
           })}
         </div>

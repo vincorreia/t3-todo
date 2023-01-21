@@ -44,4 +44,32 @@ export const todolistRouter = createTRPCRouter({
         status: 404,
       };
     }),
+  editTodolist: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ input: { id, title }, ctx }) => {
+      const response = await ctx.prisma.todolist.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+        },
+      });
+
+      if (response) {
+        return {
+          status: 200,
+          content: response,
+        };
+      }
+
+      return {
+        status: 404,
+      };
+    }),
 });
