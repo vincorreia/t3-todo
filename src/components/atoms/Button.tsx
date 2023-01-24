@@ -9,8 +9,7 @@ export const Button: React.FC<Props> = ({
   type,
   ...buttonProps
 }) => {
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onClick();
   };

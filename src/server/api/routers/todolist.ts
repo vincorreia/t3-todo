@@ -72,4 +72,30 @@ export const todolistRouter = createTRPCRouter({
         status: 404,
       };
     }),
+  getTodolist: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input, ctx }) => {
+      if (!input) {
+        return {
+          status: 400,
+        };
+      }
+
+      const todolist = await ctx.prisma.todolist.findUnique({
+        where: {
+          id: input,
+        },
+      });
+
+      if (todolist) {
+        return {
+          status: 200,
+          content: todolist,
+        };
+      }
+
+      return {
+        status: 404,
+      };
+    }),
 });
