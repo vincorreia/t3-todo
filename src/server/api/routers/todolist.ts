@@ -85,6 +85,9 @@ export const todolistRouter = createTRPCRouter({
         where: {
           id: input,
         },
+        include: {
+          todos: true,
+        },
       });
 
       if (todolist) {
