@@ -28,6 +28,12 @@ export const todolistRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.todo.deleteMany({
+        where: {
+          todolistId: input.id,
+        },
+      });
+
       const deleteResponse = await ctx.prisma.todolist.delete({
         where: {
           id: input.id,
