@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import type { MutableRefObject } from "react";
 import { CreateItem } from "../../components/molecules/CreateItem";
+import { Row } from "../../components/molecules/Row";
 import { api } from "../../utils/api";
 
 const ItemPage: React.FC = () => {
@@ -44,9 +45,21 @@ const ItemPage: React.FC = () => {
       </Head>
       <h1 className="text-5xl">{item.data?.content?.title ?? itemId}</h1>
       <CreateItem handleCreateTodo={handleCreateTodo} />
-      {item.data?.content?.todos?.map((todo) => (
-        <div key={todo.id}>{todo.title}</div>
-      ))}
+      <div className="w-4/12">
+        {item.data?.content?.todos?.map((todo) => (
+          <Row
+            key={todo.id}
+            item={todo}
+            handleDelete={(item) => () => {
+              console.log("delete", item);
+            }}
+            confirmEdit={() => (title) => {
+              console.log("edit", todo.id, title);
+            }}
+            isChecked="done"
+          />
+        ))}
+      </div>
     </>
   );
 };

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { validateKeyIsBoolean } from "../../utils/validator";
 import { Button } from "../atoms/Button";
 
 type Props<ItemType> = {
   item: ItemType;
-  handleDelete: (id: string) => () => void;
+  handleDelete: (item: string) => () => void;
   confirmEdit: (id: string) => (title: string) => void;
   isChecked?: keyof ItemType;
 };
@@ -36,21 +37,28 @@ export const Row = <ItemType extends { id: string; title: string }>({
   };
 
   return (
-    <div className="flex w-full items-center gap-x-4 text-2xl text-white justify-between">
-      {isEditing ? null : isChecked !== undefined ? (
-        <input checked={item[isChecked] as boolean} />
-      ) : (
-        <Link href={`/${item.id}`}>Access</Link>
-      )}
+    <div className="flex w-full justify-between gap-x-4 text-2xl text-white">
+      <span className="flex items-center gap-x-8">
+        {isEditing ? null : isChecked !== undefined ? (
+          <input
+            type="checkbox"
+            checked={validateKeyIsBoolean(item, isChecked)}
+          />
+        ) : (
+          <Link href={`/${item.id}`}>Access</Link>
+        )}
+        {!isEditing && item.title}
+      </span>
       {!isEditing ? (
         <>
-          <span>{item.title}</span>
-          <Button onClick={handleEdit} className="rounded-sm">
-            Edit
-          </Button>
-          <Button onClick={handleDelete(item.id)} className="rounded-sm">
-            Delete
-          </Button>
+          <span className="flex gap-x-4">
+            <Button onClick={handleEdit} className="rounded-sm">
+              Edit
+            </Button>
+            <Button onClick={handleDelete(item.id)} className="rounded-sm">
+              Delete
+            </Button>
+          </span>
         </>
       ) : (
         <>
