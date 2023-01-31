@@ -17,7 +17,7 @@ export const CreateItem: React.FC<Props> = ({ handleCreateTodo }) => {
       />
       <Button
         onClick={handleCreateTodo(createItemInput)}
-        className="rounded-r-sm text-white"
+        className="rounded-r-sm rounded-l-none !border text-white"
       >
         Create
       </Button>

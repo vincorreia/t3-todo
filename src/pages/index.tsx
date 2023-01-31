@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { type MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
 import { Row } from "../components/molecules/Row";
 
@@ -49,7 +49,6 @@ const Home: NextPage = () => {
       title,
     });
   };
-
   return (
     <>
       <Head>

@@ -19,7 +19,9 @@ export const Button: React.FC<Props> = ({
       {...buttonProps}
       onClick={handleClick}
       type={type ?? "button"}
-      className={`border border-white p-2 ${className ?? ""}`}
+      className={`rounded-md border-2 border-white px-4 py-2 outline-none ${
+        className ?? ""
+      }`}
     >
       {buttonProps.children}
     </button>
