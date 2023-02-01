@@ -57,12 +57,13 @@ export const Row = <ItemType extends { id: string; title: string }>({
           />
         }
       />
-      <div className="flex w-full justify-between gap-x-4 text-2xl text-white">
+      <div className="flex w-1/2 items-center justify-between rounded border border-white p-4 text-2xl text-white capitalize">
         <span className="flex items-center gap-x-8">
           {isEditing ? null : isChecked !== undefined ? (
             <input
               type="checkbox"
               checked={validateKeyIsBoolean(item, isChecked)}
+              className="cursor-pointer"
             />
           ) : (
             <Link href={`/${item.id}`}>Access</Link>

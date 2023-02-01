@@ -43,23 +43,23 @@ const ItemPage: React.FC = () => {
       <Head>
         <title>{item.data?.content?.title ?? itemId}</title>
       </Head>
-      <h1 className="text-5xl">{item.data?.content?.title ?? itemId}</h1>
+      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem] capitalize">
+        {item.data?.content?.title ?? itemId}
+      </h1>
       <CreateItem handleCreateTodo={handleCreateTodo} />
-      <div className="w-4/12">
-        {item.data?.content?.todos?.map((todo) => (
-          <Row
-            key={todo.id}
-            item={todo}
-            handleDelete={(item) => () => {
-              console.log("delete", item);
-            }}
-            confirmEdit={() => (title) => {
-              console.log("edit", todo.id, title);
-            }}
-            isChecked="done"
-          />
-        ))}
-      </div>
+      {item.data?.content?.todos?.map((todo) => (
+        <Row
+          key={todo.id}
+          item={todo}
+          handleDelete={(item) => () => {
+            console.log("delete", item);
+          }}
+          confirmEdit={() => (title) => {
+            console.log("edit", todo.id, title);
+          }}
+          isChecked="done"
+        />
+      ))}
     </>
   );
 };
