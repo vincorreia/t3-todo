@@ -4,18 +4,29 @@ import { validateKeyIsBoolean } from "../../utils/validator";
 import { Button } from "../atoms/Button";
 import { Modal } from "../atoms/Modal";
 
-type Props<ItemType> = {
+type GeneralProps<ItemType> = {
   item: ItemType;
   handleDelete: (item: string) => () => void;
   confirmEdit: (id: string) => (title: string) => void;
-  isChecked?: keyof ItemType;
 };
+
+interface NoCheckboxProps<ItemType> extends GeneralProps<ItemType> {
+  isChecked?: undefined;
+  handleCheck?: undefined;
+}
+interface CheckboxProps<ItemType> extends GeneralProps<ItemType> {
+  isChecked: keyof ItemType;
+  handleCheck: (id: string, check: boolean) => void;
+}
+
+type Props<ItemType> = NoCheckboxProps<ItemType> | CheckboxProps<ItemType>;
 
 export const Row = <ItemType extends { id: string; title: string }>({
   handleDelete,
   item,
   confirmEdit,
   isChecked,
+  handleCheck,
 }: Props<ItemType>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
@@ -39,6 +50,9 @@ export const Row = <ItemType extends { id: string; title: string }>({
 
   const [open, setOpen] = useState(false);
 
+  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleCheck?.(item.id, e.target.checked);
+  };
   return (
     <>
       <Modal.Main
@@ -57,13 +71,14 @@ export const Row = <ItemType extends { id: string; title: string }>({
           />
         }
       />
-      <div className="flex w-1/2 items-center justify-between rounded border border-white p-4 text-2xl text-white capitalize">
+      <div className="flex w-1/2 items-center justify-between rounded border border-white p-4 text-2xl capitalize text-white">
         <span className="flex items-center gap-x-8">
           {isEditing ? null : isChecked !== undefined ? (
             <input
               type="checkbox"
               checked={validateKeyIsBoolean(item, isChecked)}
               className="cursor-pointer"
+              onChange={handleCheckbox}
             />
           ) : (
             <Link href={`/${item.id}`}>Access</Link>

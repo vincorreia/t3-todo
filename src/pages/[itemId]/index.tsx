@@ -12,15 +12,40 @@ const ItemPage: React.FC = () => {
   if (typeof itemId !== "string") {
     return null;
   }
+
   const item = api.todolists.getTodolist.useQuery(itemId);
 
   const apiContext = api.useContext();
 
+  const onSuccess = async () => {
+    await apiContext.todolists.getTodolist.invalidate(itemId);
+  };
   const createTodo = api.todo.createTodo.useMutation({
-    onSuccess: async () => {
-      await apiContext.todolists.getTodolist.invalidate(itemId);
-    },
+    onSuccess,
   });
+
+  const deleteTodo = api.todo.deleteTodo.useMutation({
+    onSuccess,
+  });
+
+  const editTodo = api.todo.updateTodo.useMutation({
+    onSuccess,
+  });
+
+  const checkTodo = api.todo.checkTodo.useMutation({
+    onSuccess,
+  });
+
+  const handleDelete = (id: string) => () => {
+    deleteTodo.mutate(id);
+  };
+
+  const handleCheck = (id: string, done: boolean) => {
+    checkTodo.mutate({
+      id,
+      done,
+    });
+  };
 
   const handleCreateTodo = (ref: MutableRefObject<HTMLInputElement | null>) => {
     return async () => {
@@ -38,12 +63,19 @@ const ItemPage: React.FC = () => {
     };
   };
 
+  const handleEdit = (id: string) => (title: string) => {
+    editTodo.mutate({
+      id,
+      title,
+    });
+  };
+
   return (
     <>
       <Head>
         <title>{item.data?.content?.title ?? itemId}</title>
       </Head>
-      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem] capitalize">
+      <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
         {item.data?.content?.title ?? itemId}
       </h1>
       <CreateItem handleCreateTodo={handleCreateTodo} />
@@ -51,13 +83,10 @@ const ItemPage: React.FC = () => {
         <Row
           key={todo.id}
           item={todo}
-          handleDelete={(item) => () => {
-            console.log("delete", item);
-          }}
-          confirmEdit={() => (title) => {
-            console.log("edit", todo.id, title);
-          }}
+          handleDelete={handleDelete}
+          confirmEdit={handleEdit}
           isChecked="done"
+          handleCheck={handleCheck}
         />
       ))}
     </>
