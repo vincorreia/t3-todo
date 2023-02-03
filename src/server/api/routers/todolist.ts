@@ -1,6 +1,12 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+
+const notFoundError = new TRPCError({
+  code: "NOT_FOUND",
+  message: "Todolist not found",
+});
 
 export const todolistRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -10,12 +16,14 @@ export const todolistRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string(),
+        type: z.enum(["TODO", "SHOPPING_TODO"]).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const newTodolist = await ctx.prisma.todolist.create({
         data: {
           title: input.title,
+          type: input.type,
         },
       });
 
@@ -46,24 +54,40 @@ export const todolistRouter = createTRPCRouter({
         };
       }
 
-      return {
-        status: 404,
-      };
+      throw notFoundError;
     }),
   editTodolist: publicProcedure
     .input(
       z.object({
         id: z.string(),
         title: z.string(),
+        type: z.enum(["TODO", "SHOPPING_TODO"]).optional(),
       })
     )
-    .mutation(async ({ input: { id, title }, ctx }) => {
+    .mutation(async ({ input: { id, title, type }, ctx }) => {
+      const todoList = await ctx.prisma.todolist.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          todos: true,
+        },
+      });
+
+      if (type && todoList?.todos.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot change type of todolist with todos",
+        });
+      }
+
       const response = await ctx.prisma.todolist.update({
         where: {
           id,
         },
         data: {
           title,
+          type: todoList?.todos.length ? todoList.type : type,
         },
       });
 
@@ -74,17 +98,16 @@ export const todolistRouter = createTRPCRouter({
         };
       }
 
-      return {
-        status: 404,
-      };
+      throw notFoundError;
     }),
   getTodolist: publicProcedure
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       if (!input) {
-        return {
-          status: 400,
-        };
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Missing id",
+        });
       }
 
       const todolist = await ctx.prisma.todolist.findUnique({
@@ -103,8 +126,6 @@ export const todolistRouter = createTRPCRouter({
         };
       }
 
-      return {
-        status: 404,
-      };
+      throw notFoundError;
     }),
 });

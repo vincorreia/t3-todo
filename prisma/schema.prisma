@@ -10,12 +10,10 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum TodoType {
+    TODO
+    SHOPPING_TODO
 }
-
 model Todo {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -24,6 +22,7 @@ model Todo {
     done      Boolean  @default(false)
     todolist  Todolist @relation(fields: [todolistId], references: [id])
     todolistId String
+    amount    Int?     @default(0)
 }
 
 model Todolist {
@@ -31,5 +30,6 @@ model Todolist {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     title     String
+    type      TodoType? @default(TODO)
     todos     Todo[]
 }
