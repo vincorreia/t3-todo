@@ -22,6 +22,7 @@ const Main: React.FC<Props> = ({
   useEffect(() => {
     setClientExists(true);
   }, []);
+  
   if (!open || !clientExists) {
     return null;
   }
@@ -32,7 +33,7 @@ const Main: React.FC<Props> = ({
 
   return createPortal(
     <div
-      className="absolute top-0 z-[9999] grid h-full w-full items-center justify-center bg-black bg-opacity-20"
+      className="absolute top-0 z-[9998] grid h-full w-full items-center justify-center bg-black bg-opacity-20"
       onClick={handleOpen}
     >
       <div

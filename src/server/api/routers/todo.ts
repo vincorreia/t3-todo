@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -7,13 +8,35 @@ export const todoRouter = createTRPCRouter({
       z.object({
         title: z.string(),
         todolistId: z.string(),
+        amount: z.number().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const todoList = await ctx.prisma.todolist.findUnique({
+        where: {
+          id: input.todolistId,
+        },
+      });
+
+      if (todoList?.type === "SHOPPING_TODO" && !input.amount) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Amount is required for shopping todo",
+        });
+      }
+
+      if (todoList?.type === "TODO" && input.amount) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Amount is not allowed for general todo",
+        });
+      }
+
       const newTodo = await ctx.prisma.todo.create({
         data: {
           title: input.title,
           todolistId: input.todolistId,
+          amount: input.amount,
         },
       });
 

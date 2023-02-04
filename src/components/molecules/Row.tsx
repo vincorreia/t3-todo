@@ -1,13 +1,21 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpRightFromSquare as access,
+  faPenToSquare as edit,
+  faTrash as del,
+  faCircleXmark as abort,
+  faCircleCheck as confirm,
+} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { validateKeyIsBoolean } from "../../utils/validator";
-import { Button } from "../atoms/Button";
 import { Modal } from "../atoms/Modal";
+import { Checkbox } from "../atoms/Checkbox";
 
 type GeneralProps<ItemType> = {
   item: ItemType;
   handleDelete: (item: string) => () => void;
-  confirmEdit: (id: string) => (title: string) => void;
+  confirmEdit: (id: string, title: string) => void;
 };
 
 interface NoCheckboxProps<ItemType> extends GeneralProps<ItemType> {
@@ -41,13 +49,12 @@ export const Row = <ItemType extends { id: string; title: string }>({
     const input = inputRef.current;
 
     if (input && input.value.length > 2) {
-      confirmEdit(item.id)(input.value);
+      confirmEdit(item.id, input.value);
       handleEdit();
     } else {
       setError("Must have at least 3 characters");
     }
   };
-
   const [open, setOpen] = useState(false);
 
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,34 +78,35 @@ export const Row = <ItemType extends { id: string; title: string }>({
           />
         }
       />
-      <div className="flex w-1/2 items-center justify-between rounded border border-white p-4 text-2xl capitalize text-white">
+      <div className="flex w-1/2 items-center justify-between gap-x-2 rounded border border-white p-4 text-2xl capitalize text-white">
         <span className="flex items-center gap-x-8">
           {isEditing ? null : isChecked !== undefined ? (
-            <input
-              type="checkbox"
+            <Checkbox
               checked={validateKeyIsBoolean(item, isChecked)}
-              className="cursor-pointer"
               onChange={handleCheckbox}
+              id={item.id}
             />
           ) : (
-            <Link href={`/${item.id}`}>Access</Link>
+            <Link href={`/${item.id}`}>
+              <FontAwesomeIcon icon={access} />
+            </Link>
           )}
-          {!isEditing && item.title}
+          {!isEditing && <span className="py-1 px-2">{item.title}</span>}
         </span>
         {!isEditing ? (
           <>
-            <span className="flex gap-x-4">
-              <Button onClick={handleEdit} className="rounded-sm">
-                Edit
-              </Button>
-              <Button
-                onClick={() => {
-                  setOpen(true);
-                }}
-                className="rounded-sm"
-              >
-                Delete
-              </Button>
+            <span className="flex items-center gap-x-4">
+              <FontAwesomeIcon
+                icon={edit}
+                onClick={handleEdit}
+                className="hover:cursor-pointer"
+              />
+
+              <FontAwesomeIcon
+                icon={del}
+                onClick={() => setOpen(true)}
+                className="hover:cursor-pointer"
+              />
             </span>
           </>
         ) : (
@@ -106,7 +114,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
             <label htmlFor={item.id} className="flex w-full flex-col gap-y-2">
               <input
                 type="text"
-                className="h-full text-black"
+                className="h-full rounded-sm py-1 px-2 text-black outline-none"
                 ref={inputRef}
                 defaultValue={item.title}
                 id={item.id}
@@ -115,8 +123,16 @@ export const Row = <ItemType extends { id: string; title: string }>({
                 <span className="text-red-500">{error}</span>
               ) : null}
             </label>
-            <Button onClick={handleConfirmEdit}>Confirm</Button>
-            <Button onClick={handleEdit}>Abort</Button>
+            <FontAwesomeIcon
+              icon={confirm}
+              onClick={handleConfirmEdit}
+              className="hover:cursor-pointer"
+            />
+            <FontAwesomeIcon
+              icon={abort}
+              onClick={handleEdit}
+              className="hover:cursor-pointer"
+            />
           </>
         )}
       </div>
