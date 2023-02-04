@@ -7,7 +7,7 @@ import { Modal } from "../atoms/Modal";
 type GeneralProps<ItemType> = {
   item: ItemType;
   handleDelete: (item: string) => () => void;
-  confirmEdit: (id: string) => (title: string) => void;
+  confirmEdit: (id: string, title: string) => void;
 };
 
 interface NoCheckboxProps<ItemType> extends GeneralProps<ItemType> {
@@ -41,13 +41,12 @@ export const Row = <ItemType extends { id: string; title: string }>({
     const input = inputRef.current;
 
     if (input && input.value.length > 2) {
-      confirmEdit(item.id)(input.value);
+      confirmEdit(item.id, input.value);
       handleEdit();
     } else {
       setError("Must have at least 3 characters");
     }
   };
-
   const [open, setOpen] = useState(false);
 
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {

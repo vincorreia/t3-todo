@@ -1,26 +1,43 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import type { MutableRefObject } from "react";
+import { type MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
 import { Row } from "../components/molecules/Row";
+import { useCreateToast } from "../hooks/atoms";
 
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
   const allTodoLists = api.todolists.getAll.useQuery();
 
+  const { successToast, loadingToast, errorToast } = useCreateToast();
+
   const apiContext = api.useContext();
 
   const onSuccess = async () => {
     await apiContext.todolists.getAll.invalidate();
+    successToast("The data has been successfully updated!");
   };
 
-  const deleteTodo = api.todolists.deleteTodolist.useMutation({ onSuccess });
+  const deleteTodo = api.todolists.deleteTodolist.useMutation({
+    onSuccess,
+    onError: (error) => {
+      errorToast(error.message);
+    },
+  });
 
-  const editTodo = api.todolists.editTodolist.useMutation({ onSuccess });
+  const editTodo = api.todolists.editTodolist.useMutation({
+    onSuccess,
+    onError: (error) => {
+      errorToast(error.message);
+    },
+  });
 
   const todolistsMutation = api.todolists.createTodolist.useMutation({
     onSuccess,
+    onError: (error) => {
+      errorToast(error.message);
+    },
   });
 
   const handleCreateTodo =
@@ -28,6 +45,7 @@ const Home: NextPage = () => {
     async () => {
       const input = createTodoInput.current;
 
+      loadingToast("Creating...");
       if (input?.value) {
         const response = await todolistsMutation.mutateAsync({
           title: input.value,
@@ -40,10 +58,12 @@ const Home: NextPage = () => {
     };
 
   const handleDeleteTodo = (id: string) => () => {
+    loadingToast("Deleting...");
     deleteTodo.mutate({ id });
   };
 
-  const confirmEditTodolist = (id: string) => (title: string) => {
+  const confirmEditTodolist = (id: string, title: string) => {
+    loadingToast("Editing...");
     editTodo.mutate({
       id,
       title,

@@ -63,7 +63,7 @@ const ItemPage: React.FC = () => {
     };
   };
 
-  const handleEdit = (id: string) => (title: string) => {
+  const handleEdit = (id: string, title: string) => {
     editTodo.mutate({
       id,
       title,
