@@ -7,7 +7,6 @@ import { ToastBody } from "./ToastBody";
 
 export const Toast = () => {
   const [{ message, type, duration }, setToastAtom] = useToastAtom();
-
   useEffect(() => {
     if (duration) {
       const timer = setTimeout(() => {
