@@ -3,11 +3,13 @@ import { useRouter } from "next/router";
 import type { MutableRefObject } from "react";
 import { CreateItem } from "../../components/molecules/CreateItem";
 import { Row } from "../../components/molecules/Row";
+import { useCreateToast } from "../../hooks/atoms";
 import { api } from "../../utils/api";
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
   const { itemId } = query;
+  const { successToast, errorToast, loadingToast } = useCreateToast();
 
   if (typeof itemId !== "string") {
     return null;
@@ -17,30 +19,41 @@ const ItemPage: React.FC = () => {
 
   const apiContext = api.useContext();
 
+  const onError = <DataType extends { message: string }>(error: DataType) => {
+    errorToast(error.message);
+  };
+
   const onSuccess = async () => {
     await apiContext.todolists.getTodolist.invalidate(itemId);
+    successToast("The data has been successfully updated!");
   };
   const createTodo = api.todo.createTodo.useMutation({
     onSuccess,
+    onError,
   });
 
   const deleteTodo = api.todo.deleteTodo.useMutation({
     onSuccess,
+    onError,
   });
 
   const editTodo = api.todo.updateTodo.useMutation({
     onSuccess,
+    onError,
   });
 
   const checkTodo = api.todo.checkTodo.useMutation({
     onSuccess,
+    onError,
   });
 
   const handleDelete = (id: string) => () => {
+    loadingToast("Deleting...");
     deleteTodo.mutate(id);
   };
 
   const handleCheck = (id: string, done: boolean) => {
+    loadingToast("Updating...");
     checkTodo.mutate({
       id,
       done,
@@ -49,6 +62,7 @@ const ItemPage: React.FC = () => {
 
   const handleCreateTodo = (ref: MutableRefObject<HTMLInputElement | null>) => {
     return async () => {
+      loadingToast("Creating...");
       const input = ref.current;
       if (input) {
         const response = await createTodo.mutateAsync({
@@ -64,6 +78,7 @@ const ItemPage: React.FC = () => {
   };
 
   const handleEdit = (id: string, title: string) => {
+    loadingToast("Updating...");
     editTodo.mutate({
       id,
       title,

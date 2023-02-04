@@ -19,25 +19,23 @@ const Home: NextPage = () => {
     successToast("The data has been successfully updated!");
   };
 
+  const onError = <DataType extends { message: string }>(error: DataType) => {
+    errorToast(error.message);
+  };
+
   const deleteTodo = api.todolists.deleteTodolist.useMutation({
     onSuccess,
-    onError: (error) => {
-      errorToast(error.message);
-    },
+    onError,
   });
 
   const editTodo = api.todolists.editTodolist.useMutation({
     onSuccess,
-    onError: (error) => {
-      errorToast(error.message);
-    },
+    onError,
   });
 
   const todolistsMutation = api.todolists.createTodolist.useMutation({
     onSuccess,
-    onError: (error) => {
-      errorToast(error.message);
-    },
+    onError,
   });
 
   const handleCreateTodo =

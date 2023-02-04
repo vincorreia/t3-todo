@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { TOAST_INITIAL_VAL } from "../../../consts";
@@ -17,14 +18,18 @@ export const Toast = () => {
     }
   }, [duration, setToastAtom]);
 
-  if (!type) {
-    return null;
-  }
-
   return ReactDOM.createPortal(
-    <div className="fixed top-0 z-[9999] w-full">
-      <ToastBody message={message} type={type} />
-    </div>,
+    <AnimatePresence>
+      {type ? (
+        <motion.div
+          animate={{ translateY: "100%" }}
+          exit={{ translateY: "-100%" }}
+          className="fixed bottom-full z-[9999] w-full"
+        >
+          <ToastBody message={message} type={type} />
+        </motion.div>
+      ) : null}
+    </AnimatePresence>,
     document.body
   );
 };
