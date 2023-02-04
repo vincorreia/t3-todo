@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { TOAST_INITIAL_VAL } from "../../../consts";
 import { useToastAtom } from "../../../hooks/atoms";
@@ -7,6 +7,12 @@ import { ToastBody } from "./ToastBody";
 
 export const Toast = () => {
   const [{ message, type, duration }, setToastAtom] = useToastAtom();
+  const [clientExists, setClientExists] = useState(false);
+
+  useEffect(() => {
+    setClientExists(true);
+  }, []);
+
   useEffect(() => {
     if (duration) {
       const timer = setTimeout(() => {
@@ -16,6 +22,10 @@ export const Toast = () => {
       return () => clearTimeout(timer);
     }
   }, [duration, setToastAtom]);
+
+  if (!clientExists) {
+    return null;
+  }
 
   return ReactDOM.createPortal(
     <AnimatePresence>
