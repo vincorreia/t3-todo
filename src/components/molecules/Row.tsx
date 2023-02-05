@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 import { validateKeyIsBoolean } from "../../utils/validator";
 import { Modal } from "../atoms/Modal";
 import { Checkbox } from "../atoms/Checkbox";
+import { motion } from "framer-motion";
 
 type GeneralProps<ItemType> = {
   item: ItemType;
@@ -78,7 +79,14 @@ export const Row = <ItemType extends { id: string; title: string }>({
           />
         }
       />
-      <div className="flex w-full items-center justify-between gap-x-2 rounded border border-white p-4 text-2xl capitalize text-white">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        layout
+        layoutId={item.id}
+        className="flex w-full items-center justify-between gap-x-2 rounded border border-white p-4 text-2xl capitalize text-white"
+      >
         <span className="flex items-center gap-x-8">
           {isEditing ? null : isChecked !== undefined ? (
             <Checkbox
@@ -111,8 +119,8 @@ export const Row = <ItemType extends { id: string; title: string }>({
           </>
         ) : (
           <>
-            <div className="flex flex-col w-full">
-              <div className="flex gap-x-2 items-center justify-between w-full">
+            <div className="flex w-full flex-col">
+              <div className="flex w-full items-center justify-between gap-x-2">
                 <label htmlFor={item.id} className="w-full">
                   <input
                     type="text"
@@ -139,7 +147,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
             </div>
           </>
         )}
-      </div>
+      </motion.div>
     </>
   );
 };

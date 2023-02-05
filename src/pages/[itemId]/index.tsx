@@ -8,6 +8,7 @@ import { api } from "../../utils/api";
 import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
+import { AnimateSharedLayout } from "framer-motion";
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
@@ -95,16 +96,18 @@ const ItemPage: React.FC = () => {
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
         {item.data?.content?.title ?? itemId}
       </h1>
-      <CreateItem handleCreateTodo={handleCreateTodo} />
-      <Table
-        items={item.data?.content.todos ?? []}
-        functions={{
-          handleDelete,
-          handleCheck,
-          confirmEdit: handleEdit,
-        }}
-        isChecked="done"
-      />
+      <AnimateSharedLayout>
+        <CreateItem handleCreateTodo={handleCreateTodo} />
+        <Table
+          items={item.data?.content.todos ?? []}
+          functions={{
+            handleDelete,
+            handleCheck,
+            confirmEdit: handleEdit,
+          }}
+          isChecked="done"
+        />
+      </AnimateSharedLayout>
     </>
   );
 };

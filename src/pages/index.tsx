@@ -1,3 +1,4 @@
+import { AnimateSharedLayout } from "framer-motion";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { type MutableRefObject } from "react";
@@ -77,16 +78,19 @@ const Home: NextPage = () => {
       <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
         Lists
       </h1>
+      <AnimateSharedLayout>
+        <>
+          <CreateItem handleCreateTodo={handleCreateTodo} />
 
-      <CreateItem handleCreateTodo={handleCreateTodo} />
-
-      <Table
-        items={allTodoLists.data ?? []}
-        functions={{
-          handleDelete: handleDeleteTodo,
-          confirmEdit: confirmEditTodolist,
-        }}
-      />
+          <Table
+            items={allTodoLists.data ?? []}
+            functions={{
+              handleDelete: handleDeleteTodo,
+              confirmEdit: confirmEditTodolist,
+            }}
+          />
+        </>
+      </AnimateSharedLayout>
     </>
   );
 };
