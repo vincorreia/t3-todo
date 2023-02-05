@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const todoRouter = createTRPCRouter({
-  createTodo: publicProcedure
+  create: publicProcedure
     .input(
       z.object({
         title: z.string(),
@@ -42,7 +42,7 @@ export const todoRouter = createTRPCRouter({
 
       return newTodo;
     }),
-  deleteTodo: publicProcedure
+  delete: publicProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
       const deletedTodo = await ctx.prisma.todo.delete({
@@ -53,7 +53,7 @@ export const todoRouter = createTRPCRouter({
 
       return deletedTodo;
     }),
-  updateTodo: publicProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -72,7 +72,7 @@ export const todoRouter = createTRPCRouter({
 
       return updatedTodo;
     }),
-  checkTodo: publicProcedure
+  check: publicProcedure
     .input(
       z.object({
         id: z.string(),

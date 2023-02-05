@@ -33,11 +33,11 @@ const Main: React.FC<Props> = ({
 
   return createPortal(
     <div
-      className="absolute top-0 z-[9998] grid h-full w-full items-center justify-center bg-black bg-opacity-20"
+      className="absolute top-0 px-4 z-[9998] grid h-full w-full items-center justify-center bg-black bg-opacity-20"
       onClick={handleOpen}
     >
       <div
-        className={`flex max-h-[5/6] min-w-[40rem] flex-col gap-y-16 rounded-sm bg-white p-16 ${
+        className={`flex max-h-[5/6] max-w-[40rem] w-full flex-col gap-y-16 rounded-sm bg-white p-16 ${
           hasStaticHeight ? "h-5/6" : ""
         }`}
         onClick={(e) => {
