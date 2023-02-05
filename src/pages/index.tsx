@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { type MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
-import { Row } from "../components/molecules/Row";
+import { Table } from "../components/organisms/Table";
 import { useCreateToast } from "../hooks/atoms";
 
 import { api } from "../utils/api";
@@ -23,17 +23,17 @@ const Home: NextPage = () => {
     errorToast(error.message);
   };
 
-  const deleteTodo = api.todolists.deleteTodolist.useMutation({
+  const deleteTodo = api.todolists.delete.useMutation({
     onSuccess,
     onError,
   });
 
-  const editTodo = api.todolists.editTodolist.useMutation({
+  const editTodo = api.todolists.edit.useMutation({
     onSuccess,
     onError,
   });
 
-  const todolistsMutation = api.todolists.createTodolist.useMutation({
+  const todolistsMutation = api.todolists.create.useMutation({
     onSuccess,
     onError,
   });
@@ -80,18 +80,13 @@ const Home: NextPage = () => {
 
       <CreateItem handleCreateTodo={handleCreateTodo} />
 
-      {allTodoLists.data?.length
-        ? allTodoLists.data?.map((todoList) => {
-            return (
-              <Row
-                item={todoList}
-                key={todoList.id}
-                handleDelete={handleDeleteTodo}
-                confirmEdit={confirmEditTodolist}
-              />
-            );
-          })
-        : null}
+      <Table
+        items={allTodoLists.data ?? []}
+        functions={{
+          handleDelete: handleDeleteTodo,
+          confirmEdit: confirmEditTodolist,
+        }}
+      />
     </>
   );
 };

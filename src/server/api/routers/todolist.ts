@@ -12,7 +12,7 @@ export const todolistRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.todolist.findMany();
   }),
-  createTodolist: publicProcedure
+  create: publicProcedure
     .input(
       z.object({
         title: z.string(),
@@ -29,7 +29,7 @@ export const todolistRouter = createTRPCRouter({
 
       return newTodolist;
     }),
-  deleteTodolist: publicProcedure
+  delete: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -56,7 +56,7 @@ export const todolistRouter = createTRPCRouter({
 
       throw notFoundError;
     }),
-  editTodolist: publicProcedure
+  edit: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -100,7 +100,7 @@ export const todolistRouter = createTRPCRouter({
 
       throw notFoundError;
     }),
-  getTodolist: publicProcedure
+  get: publicProcedure
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       if (!input) {
