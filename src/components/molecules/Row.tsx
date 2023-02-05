@@ -111,28 +111,32 @@ export const Row = <ItemType extends { id: string; title: string }>({
           </>
         ) : (
           <>
-            <label htmlFor={item.id} className="flex w-full flex-col gap-y-2">
-              <input
-                type="text"
-                className="w-full h-full rounded-sm py-1 px-2 text-black outline-none"
-                ref={inputRef}
-                defaultValue={item.title}
-                id={item.id}
-              />
+            <div className="flex flex-col w-full">
+              <div className="flex gap-x-2 items-center justify-between w-full">
+                <label htmlFor={item.id} className="w-full">
+                  <input
+                    type="text"
+                    className="h-full w-full rounded-sm py-1 px-2 text-black outline-none"
+                    ref={inputRef}
+                    defaultValue={item.title}
+                    id={item.id}
+                  />
+                </label>
+                <FontAwesomeIcon
+                  icon={confirm}
+                  onClick={handleConfirmEdit}
+                  className="hover:cursor-pointer"
+                />
+                <FontAwesomeIcon
+                  icon={abort}
+                  onClick={handleEdit}
+                  className="hover:cursor-pointer"
+                />
+              </div>
               {error.length ? (
-                <span className="text-red-500">{error}</span>
+                <span className="basis-full text-sm text-red-500">{error}</span>
               ) : null}
-            </label>
-            <FontAwesomeIcon
-              icon={confirm}
-              onClick={handleConfirmEdit}
-              className="hover:cursor-pointer"
-            />
-            <FontAwesomeIcon
-              icon={abort}
-              onClick={handleEdit}
-              className="hover:cursor-pointer"
-            />
+            </div>
           </>
         )}
       </div>
