@@ -1,4 +1,5 @@
 import { Row } from "../molecules/Row";
+import { AnimatePresence, motion } from "framer-motion";
 
 type GeneralProps<ItemType> = {
   items: ItemType[];
@@ -37,29 +38,36 @@ export const Table = <ItemType extends { id: string; title: string }>({
   functions: { handleDelete, confirmEdit, handleCheck },
 }: Props<ItemType>) => {
   return (
-    <div className="flex h-full w-full flex-grow flex-col gap-y-8 overflow-y-auto px-4">
-      {items.map((item) => {
-        if (isChecked && handleCheck) {
+    <motion.div
+      transition={{ duration: 0.5, y: { stiffness: 1000 } }}
+      layout
+      layoutId="table"
+      className="flex h-full w-full flex-grow flex-col gap-y-8 overflow-y-auto px-4"
+    >
+      <AnimatePresence mode="popLayout">
+        {items.map((item) => {
+          if (isChecked && handleCheck) {
+            return (
+              <Row
+                key={item.id}
+                item={item}
+                handleDelete={handleDelete}
+                confirmEdit={confirmEdit}
+                isChecked={isChecked}
+                handleCheck={handleCheck}
+              />
+            );
+          }
           return (
             <Row
               key={item.id}
               item={item}
               handleDelete={handleDelete}
               confirmEdit={confirmEdit}
-              isChecked={isChecked}
-              handleCheck={handleCheck}
             />
           );
-        }
-        return (
-          <Row
-            key={item.id}
-            item={item}
-            handleDelete={handleDelete}
-            confirmEdit={confirmEdit}
-          />
-        );
-      })}
-    </div>
+        })}
+      </AnimatePresence>
+    </motion.div>
   );
 };

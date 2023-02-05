@@ -17,7 +17,6 @@ export const useCreateToast = () => {
   const [, setToastAtom] = useToastAtom();
 
   const successToast = (message: string, duration?: number) => {
-    console.log("success toast", message, duration);
     setToastAtom({ message, type: "success", duration: duration ?? 5000 });
   };
 
