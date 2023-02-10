@@ -1,10 +1,11 @@
-import { AnimateSharedLayout } from "framer-motion";
+import { LayoutGroup } from "framer-motion";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { type MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
 import { Table } from "../components/organisms/Table";
 import { useCreateToast } from "../hooks/atoms";
+import type { InputRef } from "../types/Ref";
 
 import { api } from "../utils/api";
 
@@ -40,14 +41,14 @@ const Home: NextPage = () => {
   });
 
   const handleCreateTodo =
-    (createTodoInput: MutableRefObject<HTMLInputElement | null>) =>
-    async () => {
-      const input = createTodoInput.current;
+    (createTodoInput?: MutableRefObject<InputRef | null>) => async () => {
+      const input = createTodoInput?.current?.inputRef.current;
+      const parsedValue = createTodoInput?.current?.validate(input?.value);
 
-      loadingToast("Creating...");
-      if (input?.value) {
+      if (input && parsedValue) {
+        loadingToast("Creating...");
         const response = await todolistsMutation.mutateAsync({
-          title: input.value,
+          title: parsedValue,
         });
 
         if (response) {
@@ -78,7 +79,7 @@ const Home: NextPage = () => {
       <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
         Lists
       </h1>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <>
           <CreateItem handleCreateTodo={handleCreateTodo} />
 
@@ -90,7 +91,7 @@ const Home: NextPage = () => {
             }}
           />
         </>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </>
   );
 };

@@ -1,23 +1,29 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { type MutableRefObject, useRef, useState } from "react";
+import { useRef, useState, type MutableRefObject } from "react";
 import { Button } from "../atoms/Button";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
+import { TextField } from "../atoms/TextField";
+import type { InputRef } from "../../types/Ref";
+import type { z } from "zod";
 
 type Props = {
-  handleCreateTodo: (
-    ref: MutableRefObject<HTMLInputElement | null>
-  ) => () => void;
+  handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
+  validationSchema?: z.ZodString;
 };
-export const CreateItem: React.FC<Props> = ({ handleCreateTodo }) => {
-  const createItemInput = useRef<HTMLInputElement | null>(null);
+export const CreateItem: React.FC<Props> = ({
+  handleCreateTodo,
+  validationSchema,
+}) => {
+  const createItemInput = useRef<InputRef | null>(null);
 
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
   };
+
   return (
     <motion.div
       layout="position"
@@ -47,12 +53,11 @@ export const CreateItem: React.FC<Props> = ({ handleCreateTodo }) => {
             }}
             layout
             htmlFor="createItem"
-            className="flex items-center"
+            className="flex items-start"
           >
-            <input
-              type="text"
+            <TextField
               ref={createItemInput}
-              className="rounded-l-sm border border-white p-2 text-black focus:outline-none"
+              validationSchema={validationSchema}
             />
             <Button
               onClick={handleCreateTodo(createItemInput)}
