@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import type { MutableRefObject } from "react";
+import { type MutableRefObject } from "react";
 import { CreateItem } from "../../components/molecules/CreateItem";
 import { useCreateToast } from "../../hooks/atoms";
 import { api } from "../../utils/api";
@@ -9,6 +9,8 @@ import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icon
 import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
 import { AnimateSharedLayout } from "framer-motion";
+import type { InputRef } from "../../types/Ref";
+import { Loading } from "../../components/atoms/Loading";
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
@@ -60,13 +62,16 @@ const ItemPage: React.FC = () => {
     });
   };
 
-  const handleCreateTodo = (ref: MutableRefObject<HTMLInputElement | null>) => {
+  const handleCreateTodo = (ref?: MutableRefObject<InputRef | null>) => {
     return async () => {
-      loadingToast("Creating...");
-      const input = ref.current;
-      if (input) {
+      const input = ref?.current?.inputRef.current;
+
+      const parsedInput = ref?.current?.validate(input?.value);
+
+      if (input && parsedInput) {
+        loadingToast("Creating...");
         const response = await createTodo.mutateAsync({
-          title: input.value,
+          title: parsedInput,
           todolistId: itemId,
         });
 
@@ -85,21 +90,32 @@ const ItemPage: React.FC = () => {
     });
   };
 
+  if (item.isLoading || !item.data?.content) {
+    return (
+      <>
+        <Head>
+          <title>Loading item...</title>
+        </Head>
+        <Loading />
+      </>
+    );
+  }
+
   return (
     <>
       <Head>
-        <title>{item.data?.content?.title ?? itemId}</title>
+        <title>{item.data.content.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data?.content?.title ?? itemId}
+        {item.data.content.title}
       </h1>
       <AnimateSharedLayout>
         <CreateItem handleCreateTodo={handleCreateTodo} />
         <Table
-          items={item.data?.content.todos ?? []}
+          items={item.data.content.todos}
           functions={{
             handleDelete,
             handleCheck,

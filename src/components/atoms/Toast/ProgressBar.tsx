@@ -14,9 +14,7 @@ export const ProgressBar = () => {
     <div className={`h-1 w-full ${bgColors[type]}`}>
       <motion.div
         initial={{ width: "100%" }}
-        animate={{
-          width: "0%",
-        }}
+        animate={{ width: 0 }}
         transition={{
           duration: duration / 1000,
           ease: "linear",
