@@ -30,6 +30,11 @@ interface CheckboxProps<ItemType> extends GeneralProps<ItemType> {
 
 type Props<ItemType> = NoCheckboxProps<ItemType> | CheckboxProps<ItemType>;
 
+const styles = {
+  true: "border-gray-400 text-gray-400",
+  false: "border-white text-white",
+};
+
 export const Row = <ItemType extends { id: string; title: string }>({
   handleDelete,
   item,
@@ -61,6 +66,13 @@ export const Row = <ItemType extends { id: string; title: string }>({
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleCheck?.(item.id, e.target.checked);
   };
+
+  const checked = validateKeyIsBoolean(item, isChecked);
+
+  const wrapperClasses = [
+    "flex w-full items-center gap-x-2 rounded border p-4 text-2xl capitalize",
+    styles[checked.toString() as keyof typeof styles],
+  ];
   return (
     <>
       <Modal.Main
@@ -85,12 +97,12 @@ export const Row = <ItemType extends { id: string; title: string }>({
         exit={{ opacity: 0 }}
         layout
         layoutId={item.id}
-        className="flex w-full items-center justify-between gap-x-2 rounded border border-white p-4 text-2xl capitalize text-white"
+        className={wrapperClasses.join(" ")}
       >
         <span className="flex items-center gap-x-8">
           {isEditing ? null : isChecked !== undefined ? (
             <Checkbox
-              checked={validateKeyIsBoolean(item, isChecked)}
+              checked={checked}
               onChange={handleCheckbox}
               id={item.id}
             />
@@ -99,11 +111,13 @@ export const Row = <ItemType extends { id: string; title: string }>({
               <FontAwesomeIcon icon={access} />
             </Link>
           )}
-          {!isEditing && <span className="py-1 px-2">{item.title}</span>}
         </span>
+        {!isEditing && (
+          <span className="flex-grow py-1 px-2">{item.title}</span>
+        )}
         {!isEditing ? (
           <>
-            <span className="flex items-center gap-x-4">
+            <span className="flex items-center gap-x-4 text-white">
               <FontAwesomeIcon
                 icon={edit}
                 onClick={handleEdit}
@@ -119,7 +133,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
           </>
         ) : (
           <>
-            <div className="flex w-full flex-col">
+            <div className="flex w-full flex-col text-white">
               <div className="flex w-full items-center justify-between gap-x-2">
                 <label htmlFor={item.id} className="w-full">
                   <input

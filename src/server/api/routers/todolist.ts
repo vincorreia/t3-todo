@@ -1,3 +1,4 @@
+import type { Todolist } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -81,7 +82,7 @@ export const todolistRouter = createTRPCRouter({
         });
       }
 
-      const response = await ctx.prisma.todolist.update({
+      const response: Todolist = await ctx.prisma.todolist.update({
         where: {
           id,
         },
@@ -115,7 +116,16 @@ export const todolistRouter = createTRPCRouter({
           id: input,
         },
         include: {
-          todos: true,
+          todos: {
+            orderBy: [
+              {
+                done: "asc",
+              },
+              {
+                title: "asc",
+              },
+            ],
+          },
         },
       });
 
