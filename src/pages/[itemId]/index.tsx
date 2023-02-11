@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
 import { AnimateSharedLayout } from "framer-motion";
 import type { InputRef } from "../../types/Ref";
+import { Loading } from "../../components/atoms/Loading";
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
@@ -89,21 +90,32 @@ const ItemPage: React.FC = () => {
     });
   };
 
+  if (item.isLoading || !item.data?.content) {
+    return (
+      <>
+        <Head>
+          <title>Loading item...</title>
+        </Head>
+        <Loading />
+      </>
+    );
+  }
+
   return (
     <>
       <Head>
-        <title>{item.data?.content?.title ?? itemId}</title>
+        <title>{item.data.content.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data?.content?.title ?? itemId}
+        {item.data.content.title}
       </h1>
       <AnimateSharedLayout>
         <CreateItem handleCreateTodo={handleCreateTodo} />
         <Table
-          items={item.data?.content.todos ?? []}
+          items={item.data.content.todos}
           functions={{
             handleDelete,
             handleCheck,
