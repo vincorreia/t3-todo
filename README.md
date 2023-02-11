@@ -15,7 +15,7 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [x] Informative toasts
 - [x] Delete todo/todolist confirmation modal
 - [x] Visuals for checked items
-- [ ] Authentication
+- [x] Authentication
 - [ ] SSR
 
 ### Backend
@@ -28,7 +28,7 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [x] Check todo item title
 - [x] Delete todo/todolist confirmation modal
 - [x] Error handling and getting informative errors to the frontend
-- [ ] Authentication
+- [x] Authentication
 
 ## Upcoming
 
