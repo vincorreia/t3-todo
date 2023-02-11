@@ -14,7 +14,7 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [x] Check todo item title
 - [x] Informative toasts
 - [x] Delete todo/todolist confirmation modal
-- [ ] Visual effect on check (Line should be crossed)
+- [x] Visuals for checked items
 - [ ] Authentication
 - [ ] SSR
 
