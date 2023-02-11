@@ -89,7 +89,7 @@ const ItemPage: React.FC = () => {
     });
   };
 
-  if (item.isLoading || !item.data?.content) {
+  if (item.isLoading || !item.data) {
     return (
       <>
         <Head>
@@ -103,18 +103,18 @@ const ItemPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>{item.data?.content.title}</title>
+        <title>{item.data?.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data?.content.title}
+        {item.data?.title}
       </h1>
       <LayoutGroup>
         <CreateItem handleCreateTodo={handleCreateTodo} />
         <Table
-          items={item.data?.content.todos ?? []}
+          items={item.data?.todos ?? []}
           functions={{
             handleDelete,
             handleCheck,

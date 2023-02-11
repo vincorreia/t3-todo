@@ -23,6 +23,7 @@ model Todo {
     todolist  Todolist @relation(fields: [todolistId], references: [id])
     todolistId String
     amount    Int?     @default(0)
+    userId   String
 }
 
 model Todolist {
@@ -32,6 +33,7 @@ model Todolist {
     title     String
     type      TodoType? @default(TODO)
     todos     Todo[]
+    userId      String
 }
 
 // Necessary for Next auth

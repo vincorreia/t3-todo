@@ -19,7 +19,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+    id: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
