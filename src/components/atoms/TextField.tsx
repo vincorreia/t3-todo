@@ -6,10 +6,14 @@ import type { InputRef } from "../../types/Ref";
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   validationSchema?: z.ZodString;
+  wrapperClassName?: string;
 }
 
 export const TextField = React.forwardRef<InputRef, Props>(
-  ({ label, validationSchema = inputSchema, ...props }, ref) => {
+  (
+    { label, validationSchema = inputSchema, wrapperClassName, ...props },
+    ref
+  ) => {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +40,7 @@ export const TextField = React.forwardRef<InputRef, Props>(
     });
 
     return (
-      <div className="flex flex-col gap-y-2">
+      <div className={`flex w-full flex-col gap-y-2 ${wrapperClassName ?? ""}`}>
         {!!label && (
           <label htmlFor={props.id} className="text-sm font-semibold">
             {label}
@@ -49,7 +53,9 @@ export const TextField = React.forwardRef<InputRef, Props>(
           ref={inputRef}
         />
         {error && (
-          <span className="text-sm font-semibold text-red-500">{error}</span>
+          <span className="w-full text-sm font-semibold text-red-500">
+            {error}
+          </span>
         )}
       </div>
     );

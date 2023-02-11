@@ -53,11 +53,12 @@ export const CreateItem: React.FC<Props> = ({
             }}
             layout
             htmlFor="createItem"
-            className="flex items-start"
+            className="grid grid-cols-3 items-start min-w-[16rem] w-1/3"
           >
             <TextField
               ref={createItemInput}
               validationSchema={validationSchema}
+              wrapperClassName="col-span-2"
             />
             <Button
               onClick={handleCreateTodo(createItemInput)}
