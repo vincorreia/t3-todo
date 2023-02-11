@@ -8,7 +8,7 @@ import { api } from "../../utils/api";
 import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
-import { AnimateSharedLayout } from "framer-motion";
+import { LayoutGroup } from "framer-motion";
 import type { InputRef } from "../../types/Ref";
 import { Loading } from "../../components/atoms/Loading";
 
@@ -16,14 +16,13 @@ const ItemPage: React.FC = () => {
   const { query } = useRouter();
   const { itemId } = query as { itemId: string };
   const { successToast, errorToast, loadingToast } = useCreateToast();
-
-  const item = api.todolists.get.useQuery(itemId);
-
-  const apiContext = api.useContext();
-
   const onError = <DataType extends { message: string }>(error: DataType) => {
     errorToast(error.message);
   };
+
+  const item = api.todolists.get.useQuery(itemId, { onError });
+
+  const apiContext = api.useContext();
 
   const onSuccess = async () => {
     await apiContext.todolists.get.invalidate(itemId);
@@ -104,18 +103,18 @@ const ItemPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>{item.data.content.title}</title>
+        <title>{item.data?.content.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data.content.title}
+        {item.data?.content.title}
       </h1>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <CreateItem handleCreateTodo={handleCreateTodo} />
         <Table
-          items={item.data.content.todos}
+          items={item.data?.content.todos ?? []}
           functions={{
             handleDelete,
             handleCheck,
@@ -123,7 +122,7 @@ const ItemPage: React.FC = () => {
           }}
           isChecked="done"
         />
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </>
   );
 };

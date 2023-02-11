@@ -2,7 +2,7 @@ import type { Todolist } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 const notFoundError = new TRPCError({
   code: "NOT_FOUND",
@@ -101,7 +101,7 @@ export const todolistRouter = createTRPCRouter({
 
       throw notFoundError;
     }),
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       if (!input) {

@@ -19,19 +19,18 @@ const HomeHead = () => {
 };
 
 const Home: NextPage = () => {
-  const allTodoLists = api.todolists.getAll.useQuery();
-
   const { successToast, loadingToast, errorToast } = useCreateToast();
+
+  const onError = <DataType extends { message: string }>(error: DataType) => {
+    errorToast(error.message);
+  };
+  const allTodoLists = api.todolists.getAll.useQuery(undefined, { onError });
 
   const apiContext = api.useContext();
 
   const onSuccess = async () => {
     await apiContext.todolists.getAll.invalidate();
     successToast("The data has been successfully updated!");
-  };
-
-  const onError = <DataType extends { message: string }>(error: DataType) => {
-    errorToast(error.message);
   };
 
   const deleteTodo = api.todolists.delete.useMutation({
