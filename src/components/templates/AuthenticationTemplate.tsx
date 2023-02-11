@@ -32,13 +32,13 @@ export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
       <Head>
         <title>Sign in</title>
       </Head>
-      <div className="flex h-full w-full flex-col justify-center gap-4">
+      <div className="flex h-full w-full flex-col justify-center gap-4 px-6 lg:px-0">
         <h1 className="text-5xl text-white">Welcome!</h1>
         <p className="text-xl text-white">
           Please sign in to continue using the app.
         </p>
         <button
-          className="flex items-center gap-x-2 self-end rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          className="flex items-center gap-x-2 sm:self-end justify-center rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
           onClick={() => void signIn("google")}
         >
           <FontAwesomeIcon size="lg" icon={faGoogle} />
