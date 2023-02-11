@@ -8,17 +8,25 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 import { Toast } from "../components/atoms/Toast";
+import { SessionProvider } from "next-auth/react";
+import type { Session } from "next-auth/core/types";
+import { AuthenticationTemplate } from "../components/templates/AuthenticationTemplate";
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
-    <>
+    <SessionProvider session={session}>
       <main className="h-screen overflow-auto bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container mx-auto flex flex-grow flex-col items-center gap-y-8 h-full py-4 max-w-3xl">
-          <Component {...pageProps} />
+        <div className="container mx-auto flex h-full max-w-3xl flex-grow flex-col items-center gap-y-8 py-4">
+          <AuthenticationTemplate>
+            <Component {...pageProps} />
+          </AuthenticationTemplate>
         </div>
       </main>
       <Toast />
-    </>
+    </SessionProvider>
   );
 };
 

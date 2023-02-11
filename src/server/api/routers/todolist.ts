@@ -1,19 +1,21 @@
-import type { Todolist } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { validateItem } from "../../Validations";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-const notFoundError = new TRPCError({
-  code: "NOT_FOUND",
-  message: "Todolist not found",
-});
+
+
 
 export const todolistRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.todolist.findMany();
+  getAll: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todolist.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         title: z.string(),
@@ -23,6 +25,7 @@ export const todolistRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const newTodolist = await ctx.prisma.todolist.create({
         data: {
+          userId: ctx.session.user.id,
           title: input.title,
           type: input.type,
         },
@@ -30,34 +33,39 @@ export const todolistRouter = createTRPCRouter({
 
       return newTodolist;
     }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(
       z.object({
         id: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.todo.deleteMany({
-        where: {
-          todolistId: input.id,
-        },
-      });
-
-      const deleteResponse = await ctx.prisma.todolist.delete({
+      const todoList = await ctx.prisma.todolist.findUnique({
         where: {
           id: input.id,
         },
       });
 
-      if (deleteResponse) {
-        return {
-          status: 200,
-        };
-      }
+      validateItem(ctx.session.user.id, todoList);
 
-      throw notFoundError;
+      await ctx.prisma.todo.deleteMany({
+        where: {
+          todolistId: input.id,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      await ctx.prisma.todolist.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return {
+        status: 200,
+      };
     }),
-  edit: publicProcedure
+  edit: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -75,6 +83,8 @@ export const todolistRouter = createTRPCRouter({
         },
       });
 
+      validateItem(ctx.session.user.id, todoList);
+
       if (type && todoList?.todos.length) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -82,7 +92,7 @@ export const todolistRouter = createTRPCRouter({
         });
       }
 
-      const response: Todolist = await ctx.prisma.todolist.update({
+      return ctx.prisma.todolist.update({
         where: {
           id,
         },
@@ -91,17 +101,8 @@ export const todolistRouter = createTRPCRouter({
           type: todoList?.todos.length ? todoList.type : type,
         },
       });
-
-      if (response) {
-        return {
-          status: 200,
-          content: response,
-        };
-      }
-
-      throw notFoundError;
     }),
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       if (!input) {
@@ -129,13 +130,8 @@ export const todolistRouter = createTRPCRouter({
         },
       });
 
-      if (todolist) {
-        return {
-          status: 200,
-          content: todolist,
-        };
-      }
+      validateItem(ctx.session.user.id, todolist);
 
-      throw notFoundError;
+      return todolist;
     }),
 });

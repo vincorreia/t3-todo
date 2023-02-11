@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { validateItem } from "../../Validations";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const todoRouter = createTRPCRouter({
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         title: z.string(),
@@ -17,6 +18,8 @@ export const todoRouter = createTRPCRouter({
           id: input.todolistId,
         },
       });
+
+      validateItem(ctx.session.user.id, todoList);
 
       if (todoList?.type === "SHOPPING_TODO" && !input.amount) {
         throw new TRPCError({
@@ -34,6 +37,7 @@ export const todoRouter = createTRPCRouter({
 
       const newTodo = await ctx.prisma.todo.create({
         data: {
+          userId: ctx.session.user.id,
           title: input.title,
           todolistId: input.todolistId,
           amount: input.amount,
@@ -42,18 +46,28 @@ export const todoRouter = createTRPCRouter({
 
       return newTodo;
     }),
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
-      const deletedTodo = await ctx.prisma.todo.delete({
+      const todo = await ctx.prisma.todo.findUnique({
         where: {
           id: input,
         },
       });
 
-      return deletedTodo;
+      validateItem(ctx.session.user.id, todo);
+
+      await ctx.prisma.todo.delete({
+        where: {
+          id: input,
+        },
+      });
+
+      return {
+        status: 200,
+      };
     }),
-  update: publicProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -61,6 +75,14 @@ export const todoRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const todo = await ctx.prisma.todo.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      validateItem(ctx.session.user.id, todo);
+
       const updatedTodo = await ctx.prisma.todo.update({
         where: {
           id: input.id,
@@ -72,7 +94,7 @@ export const todoRouter = createTRPCRouter({
 
       return updatedTodo;
     }),
-  check: publicProcedure
+  check: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -80,6 +102,15 @@ export const todoRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+
+      const todo = await ctx.prisma.todo.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      validateItem(ctx.session.user.id, todo);
+      
       const updatedTodo = await ctx.prisma.todo.update({
         where: {
           id: input.id,
