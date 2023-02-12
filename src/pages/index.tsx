@@ -1,5 +1,5 @@
 import { LayoutGroup } from "framer-motion";
-import { type NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { type MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
@@ -8,6 +8,7 @@ import { useCreateToast } from "../hooks/atoms";
 import type { InputRef } from "../types/Ref";
 import { Loading } from "../components/atoms/Loading";
 import { api } from "../utils/api";
+import { getSSGHelpers } from "../utils/ssg";
 
 const HomeHead = () => {
   return (
@@ -16,6 +17,17 @@ const HomeHead = () => {
       <link rel="icon" href="/favicon.ico" />
     </Head>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const ssg = await getSSGHelpers(req, res);
+
+  await ssg.todolists.getAll.prefetch();
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  };
 };
 
 const Home: NextPage = () => {
