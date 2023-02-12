@@ -6,29 +6,70 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 ### Frontend
 
 #### Key features
-- [x] Create a todolist
-- [x] Edit todolist title
-- [x] Todolist page
-- [x] Create a todo item
-- [x] Edit todo item title
-- [x] Check todo item title
-- [x] Informative toasts
-- [x] Delete todo/todolist confirmation modal
-- [x] Visuals for checked items
-- [x] Authentication
-- [ ] SSR
+- Create a todolist
+---
+- Edit todolist title
+---
+- Todolist page
+---
+- Create a todo item
+---
+- Edit todo item title
+---
+- Check todo item title
+---
+- Informative toasts
+---
+- Delete todo/todolist confirmation modal
+---
+- Visuals for checked items
+---
+- Authentication
+---
+- SSR (Prefetching)
+
+##### To achieve the desired result (already have a pre-rendered page from server side) I've used a SSGHelper function to prefetch the initial query. I've created a reusable utility function to create this SSG.
+```ts
+export const getSSGHelpers = async (
+  req: GetServerSidePropsContext["req"],
+  res: GetServerSidePropsContext["res"]
+) => {
+  const session = await getServerAuthSession({ req, res });
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext({ session }),
+    transformer: superjson,
+  });
+  return ssg;
+};
+```
+
+##### Usage example:
+```ts
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const ssg = await getSSGHelpers(req, res);
+
+  await ssg.todolists.getAll.prefetch();
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  };
+};
+```
+---
 
 ### Backend
 
 #### Key features
-- [x] Create a todolist
-- [x] Edit todolist title
-- [x] Create a todo item
-- [x] Edit todo item title
-- [x] Check todo item title
-- [x] Delete todo/todolist confirmation modal
-- [x] Error handling and getting informative errors to the frontend
-- [x] Authentication
+- Create a todolist
+- Edit todolist title
+- Create a todo item
+- Edit todo item title
+- Check todo item title
+- Delete todo/todolist confirmation modal
+- Error handling and getting informative errors to the frontend
+- Authentication
 
 ## Upcoming
 
