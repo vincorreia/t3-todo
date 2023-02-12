@@ -11,6 +11,23 @@ import { Table } from "../../components/organisms/Table";
 import { LayoutGroup } from "framer-motion";
 import type { InputRef } from "../../types/Ref";
 import { Loading } from "../../components/atoms/Loading";
+import { type GetServerSideProps } from "next";
+import { ssgHelpers } from "../../server/api/trpc";
+
+export const getServerSideProps: GetServerSideProps<{
+  itemId: string;
+}> = async (context) => {
+  const ssg = await ssgHelpers(context.req, context.res);
+  const itemId = context.params?.itemId as string;
+
+  await ssg.todolists.get.prefetch(itemId);
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      itemId,
+    },
+  };
+};
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();

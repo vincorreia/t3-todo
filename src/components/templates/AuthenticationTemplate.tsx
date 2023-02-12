@@ -7,6 +7,8 @@ import Head from "next/head";
 import { Loading } from "../atoms/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+
+
 export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
   children,
 }) => {
