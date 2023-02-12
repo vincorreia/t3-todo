@@ -8,7 +8,7 @@ import { useCreateToast } from "../hooks/atoms";
 import type { InputRef } from "../types/Ref";
 import { Loading } from "../components/atoms/Loading";
 import { api } from "../utils/api";
-import { ssgHelpers } from "../server/api/trpc";
+import { getSSGHelpers } from "../utils/ssg";
 
 const HomeHead = () => {
   return (
@@ -20,7 +20,7 @@ const HomeHead = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const ssg = await ssgHelpers(req, res);
+  const ssg = await getSSGHelpers(req, res);
 
   await ssg.todolists.getAll.prefetch();
   return {

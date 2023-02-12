@@ -12,12 +12,12 @@ import { LayoutGroup } from "framer-motion";
 import type { InputRef } from "../../types/Ref";
 import { Loading } from "../../components/atoms/Loading";
 import { type GetServerSideProps } from "next";
-import { ssgHelpers } from "../../server/api/trpc";
+import { getSSGHelpers } from "../../utils/ssg";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
 }> = async (context) => {
-  const ssg = await ssgHelpers(context.req, context.res);
+  const ssg = await getSSGHelpers(context.req, context.res);
   const itemId = context.params?.itemId as string;
 
   await ssg.todolists.get.prefetch(itemId);
