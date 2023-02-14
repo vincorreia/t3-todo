@@ -11,6 +11,7 @@ import { Toast } from "../components/atoms/Toast";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth/core/types";
 import { AuthenticationTemplate } from "../components/templates/AuthenticationTemplate";
+
 import type { GetServerSideProps } from "next";
 import { getServerAuthSession } from "../server/auth";
 

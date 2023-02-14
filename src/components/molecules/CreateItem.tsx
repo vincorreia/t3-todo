@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { TextField } from "../atoms/TextField";
 import type { InputRef } from "../../types/Ref";
 import type { z } from "zod";
+import { useToastAtom } from "../../hooks/atoms";
 
 type Props = {
   handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
@@ -24,6 +25,7 @@ export const CreateItem: React.FC<Props> = ({
     setOpen((prev) => !prev);
   };
 
+  const [{ type }] = useToastAtom();
   return (
     <motion.div
       layout="position"
@@ -48,12 +50,12 @@ export const CreateItem: React.FC<Props> = ({
               opacity: 0,
               y: "-10%",
               transition: {
-                duration: 0.3,
+                duration: 0.2,
               },
             }}
             layout
             htmlFor="createItem"
-            className="grid grid-cols-3 items-start min-w-[16rem] w-1/3"
+            className="grid w-1/3 min-w-[16rem] grid-cols-3 items-start"
           >
             <TextField
               ref={createItemInput}
@@ -62,6 +64,7 @@ export const CreateItem: React.FC<Props> = ({
             />
             <Button
               onClick={handleCreateTodo(createItemInput)}
+              disabled={type === "loading"}
               className="rounded-r-sm rounded-l-none !border text-white"
             >
               Create

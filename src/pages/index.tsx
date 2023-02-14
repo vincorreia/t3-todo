@@ -70,7 +70,6 @@ const Home: NextPage = () => {
         const response = await todolistsMutation.mutateAsync({
           title: parsedValue,
         });
-
         if (response) {
           input.value = "";
         }
