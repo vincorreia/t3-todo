@@ -7,24 +7,32 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 
 #### Key features
 - Create a todolist
+![Create Todolist](https://user-images.githubusercontent.com/78707622/218566784-ca4985d1-1edc-4796-ab56-adda960c8e06.gif)
+
 ---
 - Edit todolist title
----
-- Todolist page
+![Update Todolist](https://user-images.githubusercontent.com/78707622/218567090-4450aa44-00ea-4c8d-bb88-029bbd4dcd5d.gif)
+
 ---
 - Create a todo item
+![Create Todo](https://user-images.githubusercontent.com/78707622/218568031-cba1c9fd-ead7-4f27-934d-ace5d311e9fe.gif)
+
 ---
 - Edit todo item title
+![Edit Todo](https://user-images.githubusercontent.com/78707622/218568298-31dcc9f4-daa2-42b7-9d8f-6c1a2eee5480.gif)
+
 ---
-- Check todo item title
----
-- Informative toasts
+- Check todo item
+![Check Todo](https://user-images.githubusercontent.com/78707622/218568467-776b6082-1b55-4b0a-b1c0-f5f264304eaf.gif)
+
 ---
 - Delete todo/todolist confirmation modal
----
-- Visuals for checked items
+![Delete Todolist](https://user-images.githubusercontent.com/78707622/218567381-dc9956f7-41fd-4b69-a820-f291a7f7add9.gif)
+
 ---
 - Authentication
+![Authentication](https://user-images.githubusercontent.com/78707622/218569366-71084ccc-26fe-419c-8cf3-cc5d9e41df9e.gif)
+
 ---
 - SSR (Prefetching)
 
@@ -57,6 +65,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 ```
+---
+- Informative toasts
+
+##### Informative toasts for error, loading & success. Those toasts are implemented using global state via jotai & with React portals so that they can be rendered on the body directly instead of inside of the application. They can be called using the hook ```useCreateToast``` and the helper functions that it returns, ```successToast, errorToast & loadingToast``` all of which accepts two parameters, first being the text to be displayed on the toast and the second being optional and the duration that the toast will be displayed for.
+
+Implementation example:
+```ts
+ const { errorToast } = useCreateToast();
+  const onError = <DataType extends { message: string }>(error: DataType) => {
+    errorToast(error.message);
+  };
+ ```
 ---
 
 ### Backend
