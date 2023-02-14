@@ -8,7 +8,6 @@ import { Loading } from "../atoms/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-
 export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
   children,
 }) => {
@@ -40,7 +39,7 @@ export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
           Please sign in to continue using the app.
         </p>
         <button
-          className="flex items-center gap-x-2 sm:self-end justify-center rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+          className="flex items-center justify-center gap-x-2 rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20 sm:self-end"
           onClick={() => void signIn("google")}
         >
           <FontAwesomeIcon size="lg" icon={faGoogle} />

@@ -90,7 +90,6 @@ const ItemPage: React.FC = () => {
           title: parsedInput,
           todolistId: itemId,
         });
-
         if (response) {
           input.value = "";
         }
@@ -120,18 +119,18 @@ const ItemPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>{item.data?.title}</title>
+        <title>{item.data.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data?.title}
+        {item.data.title}
       </h1>
       <LayoutGroup>
         <CreateItem handleCreateTodo={handleCreateTodo} />
         <Table
-          items={item.data?.todos ?? []}
+          items={item.data.todos}
           functions={{
             handleDelete,
             handleCheck,

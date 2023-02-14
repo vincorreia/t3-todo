@@ -8,6 +8,7 @@ import {
   faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { ProgressBar } from "./ProgressBar";
+import { ActionButton } from "../ActionButton";
 
 const icon = {
   success: faCircleCheck,
@@ -34,7 +35,9 @@ export const ToastBody: React.FC<Props> = ({ type, message }) => {
   };
   return (
     <>
-      <div className={`flex items-center gap-x-8 px-8 py-4 text-white ${colors[type]}`}>
+      <div
+        className={`flex items-center gap-x-8 px-8 py-4 text-white ${colors[type]}`}
+      >
         <FontAwesomeIcon
           icon={icon[type]}
           spin={type === "loading"}
@@ -45,9 +48,7 @@ export const ToastBody: React.FC<Props> = ({ type, message }) => {
           <p className="text-xl font-semibold">{message}</p>
         </div>
         <div className="flex flex-grow items-end justify-end self-start">
-          <button onClick={handleClose} className="w-4">
-            <FontAwesomeIcon icon={faX} />
-          </button>
+          <ActionButton onClick={handleClose} className="w-4" icon={faX} />
         </div>
       </div>
       {type !== "loading" && <ProgressBar />}
