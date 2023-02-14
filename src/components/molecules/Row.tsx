@@ -142,16 +142,8 @@ export const Row = <ItemType extends { id: string; title: string }>({
                     id={item.id}
                   />
                 </label>
-                <ActionButton
-                  onClick={handleConfirmEdit}
-                  disabled={isDisabled}
-                  icon={confirm}
-                />
-                <ActionButton
-                  onClick={handleEdit}
-                  disabled={isDisabled}
-                  icon={abort}
-                />
+                <ActionButton onClick={handleConfirmEdit} icon={confirm} />
+                <ActionButton onClick={handleEdit} icon={abort} />
               </div>
               {error.length ? (
                 <span className="basis-full text-sm text-red-500">{error}</span>
