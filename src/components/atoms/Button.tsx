@@ -1,13 +1,21 @@
 import React from "react";
 import { DISABLED_CLASSES } from "../../consts";
 
+const themes = {
+  primary: "bg-blue-700 hover:bg-blue-600 active:bg-blue-500",
+  transparent: "border-2 border-white",
+  secondary: " bg-black  hover:bg-gray-700 active:bg-gray-600",
+};
+
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   onClick: () => void;
+  theme?: keyof typeof themes;
 };
 export const Button: React.FC<Props> = ({
   onClick,
   className,
   type,
+  theme = "transparent",
   ...buttonProps
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -15,7 +23,9 @@ export const Button: React.FC<Props> = ({
     onClick();
   };
 
-  const classes = ["rounded-md border-2 border-white px-4 py-2 outline-none"];
+  const classes = ["rounded-md py-2 px-3 outline-none text-white"];
+
+  classes.push(themes[theme]);
 
   if (className) {
     classes.push(className);
