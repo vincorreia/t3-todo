@@ -14,6 +14,7 @@ import { AuthenticationTemplate } from "../components/templates/AuthenticationTe
 
 import type { GetServerSideProps } from "next";
 import { getServerAuthSession } from "../server/auth";
+import { Loader } from "../components/templates/Loader";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
@@ -31,9 +32,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <main className="h-screen overflow-auto bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
         <div className="container mx-auto flex h-full max-w-3xl flex-grow flex-col items-center gap-y-8 py-4">
-          <AuthenticationTemplate>
-            <Component {...pageProps} />
-          </AuthenticationTemplate>
+          <Loader>
+            <AuthenticationTemplate>
+              <Component {...pageProps} />
+            </AuthenticationTemplate>
+          </Loader>
         </div>
       </main>
       <Toast />
