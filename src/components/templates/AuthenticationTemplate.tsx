@@ -2,13 +2,12 @@ type AuthShowcaseProps = {
   children: React.ReactNode;
 };
 import { useSession, signIn } from "next-auth/react";
-import { type NextPage } from "next";
 import Head from "next/head";
-import { Loading } from "../atoms/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { LoadingScene } from "../organisms/LoadingScene";
 
-export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
+export const AuthenticationTemplate: React.FC<AuthShowcaseProps> = ({
   children,
 }) => {
   const { status } = useSession();
@@ -18,14 +17,7 @@ export const AuthenticationTemplate: NextPage<AuthShowcaseProps> = ({
   }
 
   if (status === "loading") {
-    return (
-      <>
-        <Head>
-          <title>Loading...</title>
-        </Head>
-        <Loading />
-      </>
-    );
+    return <LoadingScene />;
   }
 
   return (
