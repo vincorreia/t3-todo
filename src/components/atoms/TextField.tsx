@@ -49,7 +49,7 @@ export const TextField = React.forwardRef<InputRef, Props>(
         <input
           {...props}
           type={props.type ?? "text"}
-          className="rounded-l-sm border border-white p-2 text-black focus:outline-none"
+          className="border border-white p-2 text-black focus:outline-none rounded"
           ref={inputRef}
         />
         {error && (

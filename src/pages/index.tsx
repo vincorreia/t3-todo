@@ -1,7 +1,7 @@
 import { LayoutGroup } from "framer-motion";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { type MutableRefObject } from "react";
+import { useState, type MutableRefObject } from "react";
 import { CreateItem } from "../components/molecules/CreateItem";
 import { Table } from "../components/organisms/Table";
 import { useCreateToast } from "../hooks/atoms";
@@ -9,6 +9,8 @@ import type { InputRef } from "../types/Ref";
 import { Loading } from "../components/atoms/Loading";
 import { api } from "../utils/api";
 import { getSSGHelpers } from "../utils/ssg";
+import { TypeSelector } from "../components/atoms/TypeSelector";
+import type { TodolistType } from "../types/Todolist";
 
 const HomeHead = () => {
   return (
@@ -60,6 +62,11 @@ const Home: NextPage = () => {
     onError,
   });
 
+  const [type, setType] = useState<TodolistType>("TODO");
+
+  const handleChangeType = (newType: TodolistType) => () => {
+    setType(newType);
+  };
   const handleCreateTodo =
     (createTodoInput?: MutableRefObject<InputRef | null>) => async () => {
       const input = createTodoInput?.current?.inputRef.current;
@@ -69,6 +76,7 @@ const Home: NextPage = () => {
         loadingToast("Creating...");
         const response = await todolistsMutation.mutateAsync({
           title: parsedValue,
+          type,
         });
         if (response) {
           input.value = "";
@@ -106,7 +114,12 @@ const Home: NextPage = () => {
       </h1>
       <LayoutGroup>
         <>
-          <CreateItem handleCreateTodo={handleCreateTodo} />
+          <CreateItem
+            handleCreateTodo={handleCreateTodo}
+            ExtraFields={
+              <TypeSelector type={type} handleChangeType={handleChangeType} />
+            }
+          />
 
           <Table
             items={allTodoLists.data}

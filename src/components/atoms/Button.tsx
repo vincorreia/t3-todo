@@ -4,7 +4,7 @@ import { DISABLED_CLASSES } from "../../consts";
 const themes = {
   primary: "bg-blue-700 hover:bg-blue-600 active:bg-blue-500",
   transparent: "border-2 border-white",
-  secondary: " bg-black  hover:bg-gray-700 active:bg-gray-600",
+  secondary: "bg-black hover:bg-gray-700 active:bg-gray-600",
 };
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
