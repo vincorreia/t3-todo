@@ -7,14 +7,17 @@ import { motion } from "framer-motion";
 import { TextField } from "../atoms/TextField";
 import type { InputRef } from "../../types/Ref";
 import type { z } from "zod";
+import { useToastAtom } from "../../hooks/atoms";
 
 type Props = {
   handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
   validationSchema?: z.ZodString;
+  ExtraFields?: React.ReactElement;
 };
 export const CreateItem: React.FC<Props> = ({
   handleCreateTodo,
   validationSchema,
+  ExtraFields,
 }) => {
   const createItemInput = useRef<InputRef | null>(null);
 
@@ -24,6 +27,7 @@ export const CreateItem: React.FC<Props> = ({
     setOpen((prev) => !prev);
   };
 
+  const [{ type: toastType }] = useToastAtom();
   return (
     <motion.div
       layout="position"
@@ -35,7 +39,7 @@ export const CreateItem: React.FC<Props> = ({
       </Button>
       <AnimatePresence presenceAffectsLayout>
         {open && (
-          <motion.label
+          <motion.div
             initial={{
               opacity: 0,
               y: "-100%",
@@ -48,25 +52,27 @@ export const CreateItem: React.FC<Props> = ({
               opacity: 0,
               y: "-10%",
               transition: {
-                duration: 0.3,
+                duration: 0.2,
               },
             }}
             layout
-            htmlFor="createItem"
-            className="grid grid-cols-3 items-start min-w-[16rem] w-1/3"
+            className="flex w-full max-w-[18rem] flex-col gap-y-2 "
           >
-            <TextField
-              ref={createItemInput}
-              validationSchema={validationSchema}
-              wrapperClassName="col-span-2"
-            />
+            <span className="flex h-full gap-x-4">
+              <TextField
+                ref={createItemInput}
+                validationSchema={validationSchema}
+                label="Name"
+              />
+              {ExtraFields}
+            </span>
             <Button
               onClick={handleCreateTodo(createItemInput)}
-              className="rounded-r-sm rounded-l-none !border text-white"
+              disabled={toastType === "loading"}
             >
               Create
             </Button>
-          </motion.label>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>

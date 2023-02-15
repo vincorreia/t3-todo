@@ -1,4 +1,5 @@
 import { cloneElement } from "react";
+import { DISABLED_CLASSES } from "../../consts";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   checked: boolean;
@@ -21,14 +22,25 @@ const CheckMark = ({ children, checked }: CheckMarkProps) => {
 };
 
 export const Checkbox: React.FC<Props> = ({ className, ...props }) => {
+  const classes = [
+    "relative h-7 w-7 cursor-pointer rounded-full border-2 border-[#ccc]",
+  ];
+
+  if (className) {
+    classes.push(className);
+  }
+
+  if (props.checked) {
+    classes.push("bg-blue-500");
+  }
+
+  if (props.disabled) {
+    classes.push(DISABLED_CLASSES);
+  }
+
   return (
     <CheckMark checked={props.checked}>
-      <label
-        htmlFor={props.id}
-        className={`relative h-7 w-7 cursor-pointer rounded-full border-2 border-[#ccc] ${
-          className ?? ""
-        } ${props.checked ? "bg-blue-500" : ""}`}
-      >
+      <label htmlFor={props.id} className={classes.join(" ")}>
         <input {...props} className="invisible" type="checkbox" />
       </label>
     </CheckMark>

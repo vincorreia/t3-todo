@@ -1,28 +1,125 @@
-# Create T3 App
+# Todolist
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## v1
+### Frontend
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+#### Key features
+- Create a todolist
+![Create Todolist](https://user-images.githubusercontent.com/78707622/218566784-ca4985d1-1edc-4796-ab56-adda960c8e06.gif)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+---
+- Edit todolist title
+![Update Todolist](https://user-images.githubusercontent.com/78707622/218567090-4450aa44-00ea-4c8d-bb88-029bbd4dcd5d.gif)
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+---
+- Create a todo item
+![Create Todo](https://user-images.githubusercontent.com/78707622/218568031-cba1c9fd-ead7-4f27-934d-ace5d311e9fe.gif)
 
-## Learn More
+---
+- Edit todo item title
+![Edit Todo](https://user-images.githubusercontent.com/78707622/218568298-31dcc9f4-daa2-42b7-9d8f-6c1a2eee5480.gif)
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+---
+- Check todo item
+![Check Todo](https://user-images.githubusercontent.com/78707622/218568467-776b6082-1b55-4b0a-b1c0-f5f264304eaf.gif)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+---
+- Delete todo/todolist confirmation modal
+![Delete Todolist](https://user-images.githubusercontent.com/78707622/218567381-dc9956f7-41fd-4b69-a820-f291a7f7add9.gif)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+---
+- Authentication
+![Authentication](https://user-images.githubusercontent.com/78707622/218569366-71084ccc-26fe-419c-8cf3-cc5d9e41df9e.gif)
 
-## How do I deploy this?
+---
+- SSR (Prefetching)
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+##### To achieve the desired result (already have a pre-rendered page from server side) I've used a SSGHelper function to prefetch the initial query. I've created a reusable utility function to create this SSG.
+```ts
+export const getSSGHelpers = async (
+  req: GetServerSidePropsContext["req"],
+  res: GetServerSidePropsContext["res"]
+) => {
+  const session = await getServerAuthSession({ req, res });
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext({ session }),
+    transformer: superjson,
+  });
+  return ssg;
+};
+```
+
+##### Usage example:
+```ts
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const ssg = await getSSGHelpers(req, res);
+
+  await ssg.todolists.getAll.prefetch();
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  };
+};
+```
+---
+- Informative toasts
+
+##### Informative toasts for error, loading & success. Those toasts are implemented using global state via jotai & with React portals so that they can be rendered on the body directly instead of inside of the application. They can be called using the hook ```useCreateToast``` and the helper functions that it returns, ```successToast, errorToast & loadingToast``` all of which accepts two parameters, first being the text to be displayed on the toast and the second being optional and the duration that the toast will be displayed for.
+
+Implementation example:
+```ts
+ const { errorToast } = useCreateToast();
+  const onError = <DataType extends { message: string }>(error: DataType) => {
+    errorToast(error.message);
+  };
+ ```
+---
+
+### Backend
+
+#### Key features
+- Create a todolist
+- Edit todolist title
+- Create a todo item
+- Edit todo item title
+- Check todo item title
+- Delete todo/todolist confirmation modal
+- Error handling and getting informative errors to the frontend
+- Authentication
+
+## Upcoming
+
+### Frontend
+
+#### Features
+- [ ] Create shopping list instead of a regular todolist
+- [ ] Convert a regular todolist to shopping list
+- [ ] If the todolist is a shopping list, todo items should display it's amount
+- [ ] If the todolist is a shopping list, it should be possible to increase or decrease the item's amount
+- [ ] Should be possible to edit the item's amount on todo item edition screen
+
+
+### Backend
+
+#### Features
+- [x] Validate if a todolist is empty on edit endpoint, in case it's not, it should not be possible to change it's type
+- [x] Create shopping list instead of a regular todolist
+- [ ] Endpoint for increasing/decreasing amount of an item, should validate either the todolist is of type shopping list, if it's not it should return an error
+- [ ] Adapt todo item edit endpoint to be possible to edit the amount as well, should validate either the todolist is of type shopping list, if it's not it should return an error
+
+## Technologies used
+- TypeScript as the main language of the project
+- tRPC as backend & frontend communication interface
+- Prisma as ORM
+- PostgreSQL as DB
+- NextJS as the main JS framework for both backend and frontend
+- TailwindCSS as the main CSS framework
+- Jotai for global state management (Frontend)
+- Vercel for hosting
+- NextAuth & Google oAuth for authentication
+---
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)![NextJS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)

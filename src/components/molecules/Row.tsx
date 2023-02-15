@@ -12,6 +12,8 @@ import { validateKeyIsBoolean } from "../../utils/validator";
 import { Modal } from "../atoms/Modal";
 import { Checkbox } from "../atoms/Checkbox";
 import { motion } from "framer-motion";
+import { useToastAtom } from "../../hooks/atoms";
+import { ActionButton } from "../atoms/ActionButton";
 
 type GeneralProps<ItemType> = {
   item: ItemType;
@@ -46,6 +48,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const [{ type }] = useToastAtom();
   const handleEdit = () => {
     setIsEditing((prev) => !prev);
     setError("");
@@ -73,6 +76,8 @@ export const Row = <ItemType extends { id: string; title: string }>({
     "flex w-full items-center gap-x-2 rounded border p-4 text-2xl capitalize",
     styles[checked.toString() as keyof typeof styles],
   ];
+
+  const isDisabled = type === "loading";
   return (
     <>
       <Modal.Main
@@ -105,6 +110,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
               checked={checked}
               onChange={handleCheckbox}
               id={item.id}
+              disabled={isDisabled}
             />
           ) : (
             <Link href={`/${item.id}`}>
@@ -118,17 +124,9 @@ export const Row = <ItemType extends { id: string; title: string }>({
         {!isEditing ? (
           <>
             <span className="flex items-center gap-x-4 text-white">
-              <FontAwesomeIcon
-                icon={edit}
-                onClick={handleEdit}
-                className="hover:cursor-pointer"
-              />
+              <ActionButton icon={edit} onClick={handleEdit} />
 
-              <FontAwesomeIcon
-                icon={del}
-                onClick={() => setOpen(true)}
-                className="hover:cursor-pointer"
-              />
+              <ActionButton icon={del} onClick={() => setOpen(true)} />
             </span>
           </>
         ) : (
@@ -144,16 +142,8 @@ export const Row = <ItemType extends { id: string; title: string }>({
                     id={item.id}
                   />
                 </label>
-                <FontAwesomeIcon
-                  icon={confirm}
-                  onClick={handleConfirmEdit}
-                  className="hover:cursor-pointer"
-                />
-                <FontAwesomeIcon
-                  icon={abort}
-                  onClick={handleEdit}
-                  className="hover:cursor-pointer"
-                />
+                <ActionButton onClick={handleConfirmEdit} icon={confirm} />
+                <ActionButton onClick={handleEdit} icon={abort} />
               </div>
               {error.length ? (
                 <span className="basis-full text-sm text-red-500">{error}</span>

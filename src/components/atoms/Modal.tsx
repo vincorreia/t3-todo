@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useToastAtom } from "../../hooks/atoms";
+import { Button } from "./Button";
 
 type Props = {
   open: boolean;
@@ -22,7 +24,7 @@ const Main: React.FC<Props> = ({
   useEffect(() => {
     setClientExists(true);
   }, []);
-  
+
   if (!open || !clientExists) {
     return null;
   }
@@ -33,11 +35,11 @@ const Main: React.FC<Props> = ({
 
   return createPortal(
     <div
-      className="absolute top-0 px-4 z-[9998] grid h-full w-full items-center justify-center bg-black bg-opacity-20"
+      className="absolute top-0 z-[9998] grid h-full w-full items-center justify-center bg-black bg-opacity-20 px-4"
       onClick={handleOpen}
     >
       <div
-        className={`flex max-h-[5/6] max-w-[40rem] w-full flex-col gap-y-16 rounded-sm bg-white p-16 ${
+        className={`flex max-h-[5/6] w-full max-w-[40rem] flex-col gap-y-16 rounded-sm bg-white p-16 ${
           hasStaticHeight ? "h-5/6" : ""
         }`}
         onClick={(e) => {
@@ -63,20 +65,17 @@ type FooterProps = {
 };
 const Footer: React.FC<FooterProps> = ({ confirmFunc, cancelFunc }) => {
   // Todo: Add Icons
+  const [{ type }] = useToastAtom();
+
+  const isDisabled = type === "loading";
   return (
     <div className="flex w-full items-center justify-end gap-x-4">
-      <button
-        className="rounded-md bg-black py-2 px-3 text-white hover:bg-gray-700 active:bg-gray-600"
-        onClick={cancelFunc}
-      >
+      <Button onClick={cancelFunc} disabled={isDisabled} theme="secondary">
         Cancel
-      </button>
-      <button
-        className="rounded-md bg-blue-700 py-2 px-3 text-white hover:bg-blue-600 active:bg-blue-500"
-        onClick={confirmFunc}
-      >
+      </Button>
+      <Button onClick={confirmFunc} disabled={isDisabled} theme="primary">
         Confirm
-      </button>
+      </Button>
     </div>
   );
 };
