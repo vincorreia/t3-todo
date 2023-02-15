@@ -6,6 +6,7 @@ import Head from "next/head";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { LoadingScene } from "../organisms/LoadingScene";
+import { LogoutBTN } from "../atoms/LogoutBTN";
 
 export const AuthenticationTemplate: React.FC<AuthShowcaseProps> = ({
   children,
@@ -13,7 +14,12 @@ export const AuthenticationTemplate: React.FC<AuthShowcaseProps> = ({
   const { status } = useSession();
 
   if (status === "authenticated") {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <LogoutBTN className="sticky lg:fixed bottom-10 left-10" />
+      </>
+    );
   }
 
   if (status === "loading") {

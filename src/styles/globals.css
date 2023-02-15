@@ -3,6 +3,7 @@
 :root {
   --primary: #2e026d;
   --secondary: white;
+  --tertiary: #15162c;
 }
 * {
   scrollbar-width: thin;
