@@ -6,36 +6,18 @@ type GeneralProps<ItemType> = {
   functions: {
     handleDelete: (item: string) => () => void;
     confirmEdit: (id: string, title: string) => void;
-    handleCheck?: (id: string, check: boolean) => void;
   };
+  LeftExtraRender?: (item: ItemType) => React.ReactNode;
+  RightExtraRender?: (item: ItemType) => React.ReactNode;
 };
 
-type CheckboxTableProps<ItemType> = GeneralProps<ItemType> & {
-  isChecked: keyof ItemType & string;
-  functions: {
-    handleCheck: (id: string, check: boolean) => void;
-    confirmEdit: (id: string, title: string) => void;
-    handleDelete: (item: string) => () => void;
-  };
-};
-
-type NoCheckboxTableProps<ItemType> = GeneralProps<ItemType> & {
-  isChecked?: undefined;
-  functions: {
-    handleCheck?: undefined;
-    confirmEdit: (id: string, title: string) => void;
-    handleDelete: (item: string) => () => void;
-  };
-};
-
-type Props<ItemType> =
-  | CheckboxTableProps<ItemType>
-  | NoCheckboxTableProps<ItemType>;
+type Props<ItemType> = GeneralProps<ItemType>;
 
 export const Table = <ItemType extends { id: string; title: string }>({
   items,
-  isChecked,
-  functions: { handleDelete, confirmEdit, handleCheck },
+  functions: { handleDelete, confirmEdit },
+  LeftExtraRender,
+  RightExtraRender,
 }: Props<ItemType>) => {
   return (
     <motion.div
@@ -46,24 +28,14 @@ export const Table = <ItemType extends { id: string; title: string }>({
     >
       <AnimatePresence mode="popLayout">
         {items.map((item) => {
-          if (isChecked && handleCheck) {
-            return (
-              <Row
-                key={item.id}
-                item={item}
-                handleDelete={handleDelete}
-                confirmEdit={confirmEdit}
-                isChecked={isChecked}
-                handleCheck={handleCheck}
-              />
-            );
-          }
           return (
             <Row
               key={item.id}
               item={item}
               handleDelete={handleDelete}
               confirmEdit={confirmEdit}
+              LeftExtraRender={LeftExtraRender}
+              RightExtraRender={RightExtraRender}
             />
           );
         })}

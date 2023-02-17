@@ -1,5 +1,4 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useRef, useState, type MutableRefObject } from "react";
 import { Button } from "../atoms/Button";
 import { AnimatePresence } from "framer-motion";
@@ -8,6 +7,7 @@ import { TextField } from "../atoms/TextField";
 import type { InputRef } from "../../types/Ref";
 import type { z } from "zod";
 import { useToastAtom } from "../../hooks/atoms";
+import { ICONS } from "../../consts";
 
 type Props = {
   handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
@@ -35,7 +35,7 @@ export const CreateItem: React.FC<Props> = ({
     >
       <Button onClick={handleOpen} className="flex w-fit items-center gap-x-2">
         <span>New Item</span>
-        <FontAwesomeIcon icon={open ? faArrowDown : faArrowUp} />
+        <FontAwesomeIcon icon={open ? ICONS.ARROW_DOWN : ICONS.ARROW_UP} />
       </Button>
       <AnimatePresence presenceAffectsLayout>
         {open && (

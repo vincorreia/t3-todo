@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { type MutableRefObject } from "react";
 import { CreateItem } from "../../components/molecules/CreateItem";
-import { useCreateToast } from "../../hooks/atoms";
+import { useCreateToast, useToastAtom } from "../../hooks/atoms";
 import { api } from "../../utils/api";
 import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -13,6 +13,7 @@ import type { InputRef } from "../../types/Ref";
 import { Loading } from "../../components/atoms/Loading";
 import { type GetServerSideProps } from "next";
 import { getSSGHelpers } from "../../utils/ssg";
+import { Checkbox } from "../../components/atoms/Checkbox";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -33,6 +34,7 @@ const ItemPage: React.FC = () => {
   const { query } = useRouter();
   const { itemId } = query as { itemId: string };
   const { successToast, errorToast, loadingToast } = useCreateToast();
+  const [{ type: toastType }] = useToastAtom();
   const onError = <DataType extends { message: string }>(error: DataType) => {
     errorToast(error.message);
   };
@@ -70,13 +72,14 @@ const ItemPage: React.FC = () => {
     deleteTodo.mutate(id);
   };
 
-  const handleCheck = (id: string, done: boolean) => {
-    loadingToast("Updating...");
-    checkTodo.mutate({
-      id,
-      done,
-    });
-  };
+  const handleCheck =
+    (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      loadingToast("Updating...");
+      checkTodo.mutate({
+        id,
+        done: e.target.checked,
+      });
+    };
 
   const handleCreateTodo = (ref?: MutableRefObject<InputRef | null>) => {
     return async () => {
@@ -133,10 +136,16 @@ const ItemPage: React.FC = () => {
           items={item.data.todos}
           functions={{
             handleDelete,
-            handleCheck,
             confirmEdit: handleEdit,
           }}
-          isChecked="done"
+          LeftExtraRender={(todo) => (
+            <Checkbox
+              checked={todo.done}
+              onChange={handleCheck(todo.id)}
+              id={todo.id}
+              disabled={toastType === "loading"}
+            />
+          )}
         />
       </LayoutGroup>
     </>

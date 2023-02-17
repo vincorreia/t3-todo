@@ -96,7 +96,7 @@ Implementation example:
 ### Frontend
 
 #### Features
-- [ ] Create shopping list instead of a regular todolist
+- [x] Create shopping list instead of a regular todolist
 - [ ] Convert a regular todolist to shopping list
 - [ ] If the todolist is a shopping list, todo items should display it's amount
 - [ ] If the todolist is a shopping list, it should be possible to increase or decrease the item's amount

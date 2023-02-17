@@ -1,7 +1,4 @@
-import {
-  faCartShopping,
-  faFileCircleCheck,
-} from "@fortawesome/free-solid-svg-icons";
+import { ICONS } from "../../consts";
 import type { TodolistType } from "../../types/Todolist";
 import { ActionButton } from "./ActionButton";
 import { Tooltip } from "./Tooltip";
@@ -18,14 +15,14 @@ export const TypeSelector: React.FC<Props> = ({ type, handleChangeType }) => {
       <div className="flex flex-grow items-center gap-x-2">
         <Tooltip text="Regular todolist">
           <ActionButton
-            icon={faFileCircleCheck}
+            icon={ICONS.TODO}
             active={type === "TODO"}
             onClick={handleChangeType("TODO")}
           />
         </Tooltip>
         <Tooltip text="Shopping list">
           <ActionButton
-            icon={faCartShopping}
+            icon={ICONS.SHOPPING_TODO}
             active={type === "SHOPPING_TODO"}
             onClick={handleChangeType("SHOPPING_TODO")}
           />

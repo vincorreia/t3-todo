@@ -11,6 +11,10 @@ import { api } from "../utils/api";
 import { getSSGHelpers } from "../utils/ssg";
 import { TypeSelector } from "../components/atoms/TypeSelector";
 import type { TodolistType } from "../types/Todolist";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tag } from "../components/atoms/Tag";
+import { ICONS } from "../consts";
 
 const HomeHead = () => {
   return (
@@ -127,6 +131,16 @@ const Home: NextPage = () => {
               handleDelete: handleDeleteTodo,
               confirmEdit: confirmEditTodolist,
             }}
+            LeftExtraRender={(item) => (
+              <Link href={`/${item.id}`}>
+                <FontAwesomeIcon icon={ICONS.ACCESS} />
+              </Link>
+            )}
+            RightExtraRender={(item) => (
+              <Tag type="right">
+                <FontAwesomeIcon icon={ICONS[item.type as TodolistType]} />
+              </Tag>
+            )}
           />
         </>
       </LayoutGroup>
