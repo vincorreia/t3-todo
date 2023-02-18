@@ -10,7 +10,7 @@ export const Tooltip: React.FC<Props> = ({ text, children }) => {
   return (
     <div className="relative w-full">
       {open && (
-        <span className="absolute bottom-6 whitespace-nowrap rounded-sm bg-black bg-opacity-90 p-1 text-sm font-normal leading-tight">
+        <span className="absolute bottom-6 whitespace-nowrap rounded-sm bg-black bg-opacity-90 p-1 text-sm font-normal leading-tight z-20">
           {text}
         </span>
       )}

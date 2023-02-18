@@ -2,17 +2,19 @@ import {
   faPenToSquare as edit,
   faTrash as del,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { type SetStateAction, useState } from "react";
 import { Modal } from "../atoms/Modal";
 import { motion } from "framer-motion";
 import { ActionButton } from "../atoms/ActionButton";
-import { EditItem } from "../atoms/EditItem";
 import { RowLayout } from "../atoms/RowLayout";
 
 type GeneralProps<ItemType> = {
   item: ItemType;
   handleDelete: (item: string) => () => void;
-  confirmEdit: (id: string, title: string) => void;
+  EditItem: (
+    item: ItemType,
+    setIsEditing: React.Dispatch<SetStateAction<boolean>>
+  ) => React.ReactNode;
   LeftExtraRender?: (item: ItemType) => React.ReactNode;
   RightExtraRender?: (item: ItemType) => React.ReactNode;
 };
@@ -22,7 +24,7 @@ type Props<ItemType> = GeneralProps<ItemType>;
 export const Row = <ItemType extends { id: string; title: string }>({
   handleDelete,
   item,
-  confirmEdit,
+  EditItem,
   LeftExtraRender,
   RightExtraRender,
 }: Props<ItemType>) => {
@@ -73,11 +75,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
         </RowLayout>
 
         {isEditing && (
-          <EditItem
-            item={item}
-            confirmEdit={confirmEdit}
-            setIsEditing={setIsEditing}
-          />
+          EditItem(item, setIsEditing)
         )}
       </motion.div>
     </>

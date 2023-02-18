@@ -1,12 +1,16 @@
 import { Row } from "../molecules/Row";
 import { AnimatePresence, motion } from "framer-motion";
+import type { Dispatch, SetStateAction } from "react";
 
 type GeneralProps<ItemType> = {
   items: ItemType[];
   functions: {
     handleDelete: (item: string) => () => void;
-    confirmEdit: (id: string, title: string) => void;
   };
+  EditItem: (
+    item: ItemType,
+    setIsEditing: Dispatch<SetStateAction<boolean>>
+  ) => React.ReactNode;
   LeftExtraRender?: (item: ItemType) => React.ReactNode;
   RightExtraRender?: (item: ItemType) => React.ReactNode;
 };
@@ -15,9 +19,10 @@ type Props<ItemType> = GeneralProps<ItemType>;
 
 export const Table = <ItemType extends { id: string; title: string }>({
   items,
-  functions: { handleDelete, confirmEdit },
+  functions: { handleDelete },
   LeftExtraRender,
   RightExtraRender,
+  EditItem,
 }: Props<ItemType>) => {
   return (
     <motion.div
@@ -33,9 +38,9 @@ export const Table = <ItemType extends { id: string; title: string }>({
               key={item.id}
               item={item}
               handleDelete={handleDelete}
-              confirmEdit={confirmEdit}
               LeftExtraRender={LeftExtraRender}
               RightExtraRender={RightExtraRender}
+              EditItem={EditItem}
             />
           );
         })}

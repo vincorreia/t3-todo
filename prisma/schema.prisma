@@ -31,7 +31,7 @@ model Todolist {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     title     String
-    type      TodoType? @default(TODO)
+    type      TodoType @default(TODO)
     todos     Todo[]
     userId      String
 }

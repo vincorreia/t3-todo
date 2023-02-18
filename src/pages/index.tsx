@@ -10,11 +10,12 @@ import { Loading } from "../components/atoms/Loading";
 import { api } from "../utils/api";
 import { getSSGHelpers } from "../utils/ssg";
 import { TypeSelector } from "../components/atoms/TypeSelector";
-import type { TodolistType } from "../types/Todolist";
+import type { EditTodolistParams, TodolistType } from "../types/Todolist";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tag } from "../components/atoms/Tag";
 import { ICONS } from "../consts";
+import { EditItem } from "../components/atoms/EditItem";
 
 const HomeHead = () => {
   return (
@@ -93,11 +94,12 @@ const Home: NextPage = () => {
     deleteTodo.mutate({ id });
   };
 
-  const confirmEditTodolist = (id: string, title: string) => {
+  const confirmEditTodolist = ({ id, title, type }: EditTodolistParams) => {
     loadingToast("Editing...");
     editTodo.mutate({
       id,
       title,
+      type,
     });
   };
 
@@ -129,8 +131,14 @@ const Home: NextPage = () => {
             items={allTodoLists.data}
             functions={{
               handleDelete: handleDeleteTodo,
-              confirmEdit: confirmEditTodolist,
             }}
+            EditItem={(item, setIsEditing) => (
+              <EditItem
+                item={item}
+                confirmEdit={confirmEditTodolist}
+                setIsEditing={setIsEditing}
+              />
+            )}
             LeftExtraRender={(item) => (
               <Link href={`/${item.id}`}>
                 <FontAwesomeIcon icon={ICONS.ACCESS} />
@@ -138,7 +146,7 @@ const Home: NextPage = () => {
             )}
             RightExtraRender={(item) => (
               <Tag type="right">
-                <FontAwesomeIcon icon={ICONS[item.type as TodolistType]} />
+                <FontAwesomeIcon icon={ICONS[item.type]} />
               </Tag>
             )}
           />
