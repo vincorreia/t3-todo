@@ -21,7 +21,7 @@ export const Table = <ItemType extends { id: string; title: string }>({
 }: Props<ItemType>) => {
   return (
     <motion.div
-      transition={{ duration: 0.25, y: { stiffness: 1000 } }}
+      transition={{ duration: 0.25 }}
       layout
       layoutId="table"
       className="flex h-full w-full flex-grow flex-col gap-y-8 overflow-y-auto px-4"

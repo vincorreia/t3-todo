@@ -1,41 +1,45 @@
+import { useRef, useState } from "react";
 import { ICONS } from "../../consts";
 import { ActionButton } from "./ActionButton";
-import { RowLayout } from "./RowLayout";
+import { TextField } from "./TextField";
+import type { InputRef, TodolistType } from "../../types";
+import { TypeSelector } from "./TypeSelector";
 
 type Props<ItemType> = {
   item: ItemType;
-  inputRef: React.RefObject<HTMLInputElement>;
-  handleConfirmEdit: () => void;
-  handleEdit: () => void;
-  error: string;
+  confirmEdit: (id: string, value: string) => void;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export const EditItem = <ItemType extends { id: string; title: string }>({
   item,
-  inputRef,
-  handleConfirmEdit,
-  handleEdit,
-  error,
+  confirmEdit,
+  setIsEditing,
 }: Props<ItemType>) => {
+  const textFieldRef = useRef<InputRef | null>(null);
+  const [type, setType] = useState<TodolistType>("TODO");
+  const handleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+
+  const handleConfirmEdit = () => {
+    const input = textFieldRef.current?.inputRef.current;
+    const parsedValue = textFieldRef.current?.validate(input?.value);
+    if (input && parsedValue) {
+      confirmEdit(item.id, parsedValue);
+      handleEdit();
+    }
+  };
+
+  const handleChangeType = (type: TodolistType) => () => {
+    setType(type);
+  };
+
   return (
-    <RowLayout>
-      <div className="flex w-full flex-col text-white">
-        <div className="flex w-full items-center justify-between gap-x-2">
-          <label htmlFor={item.id} className="w-full">
-            <input
-              type="text"
-              className="h-full w-full rounded-sm py-1 px-2 text-black outline-none"
-              ref={inputRef}
-              defaultValue={item.title}
-              id={item.id}
-            />
-          </label>
-          <ActionButton onClick={handleConfirmEdit} icon={ICONS.ACCEPT} />
-          <ActionButton onClick={handleEdit} icon={ICONS.ABORT} />
-        </div>
-        {error.length ? (
-          <span className="basis-full text-sm text-red-500">{error}</span>
-        ) : null}
-      </div>
-    </RowLayout>
+    <div className="flex w-full items-center gap-x-4 p-2">
+      <TypeSelector type={type} handleChangeType={handleChangeType} />
+      <TextField label="Name" ref={textFieldRef} defaultValue={item.title} wrapperClassName="flex-grow min-w-0" />
+      <ActionButton onClick={handleConfirmEdit} icon={ICONS.ACCEPT} className="pt-5"/>
+      <ActionButton onClick={handleEdit} icon={ICONS.ABORT} className="pt-5" />
+    </div>
   );
 };
