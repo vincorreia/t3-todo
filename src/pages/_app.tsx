@@ -12,17 +12,7 @@ import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth/core/types";
 import { AuthenticationTemplate } from "../components/templates/AuthenticationTemplate";
 
-import type { GetServerSideProps } from "next";
-import { getServerAuthSession } from "../server/auth";
 import { Loader } from "../components/templates/Loader";
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      session: await getServerAuthSession(context),
-    },
-  };
-};
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -31,7 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <main className="h-[100svh] overflow-auto bg-gradient-to-b from-[var(--primary)] to-[var(--tertiary)] text-white">
-        <div className="container mx-auto flex h-full max-w-3xl flex-grow flex-col items-center gap-y-8 py-4 relative">
+        <div className="container relative mx-auto flex h-full max-w-3xl flex-grow flex-col items-center gap-y-8 py-4">
           <Loader>
             <AuthenticationTemplate>
               <Component {...pageProps} />
