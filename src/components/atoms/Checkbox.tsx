@@ -1,5 +1,6 @@
 import { cloneElement } from "react";
 import { DISABLED_CLASSES } from "../../consts";
+import { useToastAtom } from "../../hooks/atoms";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   checked: boolean;
@@ -22,6 +23,7 @@ const CheckMark = ({ children, checked }: CheckMarkProps) => {
 };
 
 export const Checkbox: React.FC<Props> = ({ className, ...props }) => {
+  const [{ type }] = useToastAtom();
   const classes = [
     "relative h-7 w-7 cursor-pointer rounded-full border-2 border-[#ccc]",
   ];
@@ -34,7 +36,7 @@ export const Checkbox: React.FC<Props> = ({ className, ...props }) => {
     classes.push("bg-blue-500");
   }
 
-  if (props.disabled) {
+  if (props.disabled || type === "loading") {
     classes.push(DISABLED_CLASSES);
   }
 
