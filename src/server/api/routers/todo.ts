@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { validateItem, validateTodoAmount } from "../../Validations";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -114,6 +115,59 @@ export const todoRouter = createTRPCRouter({
         },
         data: {
           done: input.done,
+        },
+      });
+
+      return updatedTodo;
+    }),
+  increaseOrDecrease: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        amount: z.enum(["1", "-1"]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const amount = parseInt(input.amount) as 1 | -1;
+      const dbTodo = await ctx.prisma.todo.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          todolist: {
+            select: {
+              type: true,
+            },
+          },
+        },
+      });
+
+      const todo = validateItem(ctx.session.user.id, dbTodo);
+
+      if (todo.todolist.type === "TODO") {
+        throw new TRPCError({
+          code: "METHOD_NOT_SUPPORTED",
+          message: "You can't increase or decrease a general todo item",
+        });
+      }
+
+      const todoAmount = todo.amount as number;
+
+      if (todoAmount + amount < 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't decrease a todo item below 1",
+        });
+      }
+
+      const updatedTodo = await ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          amount: {
+            increment: amount,
+          },
         },
       });
 
