@@ -1,5 +1,5 @@
 import { ICONS, PRIMARY_BUTTON_ACTION_CLASSES } from "../../consts";
-import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
+import { useCreateToast } from "../../hooks/atoms";
 import { api } from "../../utils/api";
 import { ActionButton } from "./ActionButton";
 import { Tag } from "./Tag";
@@ -11,14 +11,45 @@ type Props = {
 };
 
 export const AmountTag: React.FC<Props> = ({ amount, id, todoListId }) => {
-  const { onSuccess, onError } = useDefaultHandlers({
-    type: "todo",
-    itemId: todoListId,
-    showDone: false,
-  });
+  const apiContext = api.useContext();
+  const { errorToast } = useCreateToast();
   const mutation = api.todo.increaseOrDecrease.useMutation({
-    onSuccess,
-    onError,
+    async onMutate(input) {
+      await apiContext.todolists.get.cancel(todoListId);
+
+      const previousValue = apiContext.todolists.get.getData(todoListId);
+
+      if (!previousValue) {
+        throw new Error("Invalid query");
+      }
+
+      const newValue = previousValue.todos.map((todo) => {
+        if (todo.id === id) {
+          if (todo.amount === null) {
+            throw new Error("Invalid query");
+          }
+          return {
+            ...todo,
+            amount: todo.amount + Number(input.amount),
+          };
+        }
+        return todo;
+      });
+
+      apiContext.todolists.get.setData(todoListId, {
+        ...previousValue,
+        todos: newValue,
+      });
+
+      return { previousValue };
+    },
+    onError(error, __input, context) {
+      apiContext.todolists.get.setData(todoListId, context?.previousValue);
+      errorToast(error.message);
+    },
+    onSettled() {
+      void apiContext.todolists.get.invalidate(todoListId);
+    },
   });
 
   if (!amount) {
