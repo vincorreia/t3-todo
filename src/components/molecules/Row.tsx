@@ -1,83 +1,47 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowUpRightFromSquare as access,
   faPenToSquare as edit,
   faTrash as del,
-  faCircleXmark as abort,
-  faCircleCheck as confirm,
 } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { validateKeyIsBoolean } from "../../utils/validator";
+import { type SetStateAction, useState } from "react";
 import { Modal } from "../atoms/Modal";
-import { Checkbox } from "../atoms/Checkbox";
 import { motion } from "framer-motion";
-import { useToastAtom } from "../../hooks/atoms";
 import { ActionButton } from "../atoms/ActionButton";
+import { RowLayout } from "../atoms/RowLayout";
 
 type GeneralProps<ItemType> = {
   item: ItemType;
   handleDelete: (item: string) => () => void;
-  confirmEdit: (id: string, title: string) => void;
+  EditItem: (
+    item: ItemType,
+    setIsEditing: React.Dispatch<SetStateAction<boolean>>
+  ) => React.ReactNode;
+  LeftExtraRender?: (item: ItemType) => React.ReactNode;
+  RightExtraRender?: (item: ItemType) => React.ReactNode;
 };
 
-interface NoCheckboxProps<ItemType> extends GeneralProps<ItemType> {
-  isChecked?: undefined;
-  handleCheck?: undefined;
-}
-interface CheckboxProps<ItemType> extends GeneralProps<ItemType> {
-  isChecked: keyof ItemType;
-  handleCheck: (id: string, check: boolean) => void;
-}
-
-type Props<ItemType> = NoCheckboxProps<ItemType> | CheckboxProps<ItemType>;
-
-const styles = {
-  true: "border-gray-400 text-gray-400",
-  false: "border-white text-white",
-};
+type Props<ItemType> = GeneralProps<ItemType>;
 
 export const Row = <ItemType extends { id: string; title: string }>({
   handleDelete,
   item,
-  confirmEdit,
-  isChecked,
-  handleCheck,
+  EditItem,
+  LeftExtraRender,
+  RightExtraRender,
 }: Props<ItemType>) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const [{ type }] = useToastAtom();
-  const handleEdit = () => {
-    setIsEditing((prev) => !prev);
-    setError("");
-  };
-
-  const handleConfirmEdit = () => {
-    const input = inputRef.current;
-
-    if (input && input.value.length > 2) {
-      confirmEdit(item.id, input.value);
-      handleEdit();
-    } else {
-      setError("Must have at least 3 characters");
-    }
-  };
   const [open, setOpen] = useState(false);
 
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleCheck?.(item.id, e.target.checked);
-  };
-
-  const checked = validateKeyIsBoolean(item, isChecked);
-
   const wrapperClasses = [
-    "flex w-full items-center gap-x-2 rounded border p-4 text-2xl capitalize",
-    styles[checked.toString() as keyof typeof styles],
+    "flex flex-col w-full rounded text-md gap-y-2 lg:text-2xl font-medium capitalize",
   ];
 
-  const isDisabled = type === "loading";
+  const layoutClasses: string[] = [];
+
+  if (!RightExtraRender) {
+    layoutClasses.push("pr-4");
+  }
+
   return (
     <>
       <Modal.Main
@@ -100,57 +64,26 @@ export const Row = <ItemType extends { id: string; title: string }>({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        layout
+        layout="position"
         layoutId={item.id}
         className={wrapperClasses.join(" ")}
       >
-        <span className="flex items-center gap-x-8">
-          {isEditing ? null : isChecked !== undefined ? (
-            <Checkbox
-              checked={checked}
-              onChange={handleCheckbox}
-              id={item.id}
-              disabled={isDisabled}
-            />
-          ) : (
-            <Link href={`/${item.id}`}>
-              <FontAwesomeIcon icon={access} />
-            </Link>
-          )}
-        </span>
-        {!isEditing && (
-          <span className="flex-grow py-1 px-2">{item.title}</span>
-        )}
-        {!isEditing ? (
-          <>
-            <span className="flex items-center gap-x-4 text-white">
-              <ActionButton icon={edit} onClick={handleEdit} />
+        <RowLayout className={layoutClasses.join(" ")}>
+          {LeftExtraRender?.(item)}
+          <span className="flex-grow py-1">{item.title}</span>
 
-              <ActionButton icon={del} onClick={() => setOpen(true)} />
-            </span>
-          </>
-        ) : (
-          <>
-            <div className="flex w-full flex-col text-white">
-              <div className="flex w-full items-center justify-between gap-x-2">
-                <label htmlFor={item.id} className="w-full">
-                  <input
-                    type="text"
-                    className="h-full w-full rounded-sm py-1 px-2 text-black outline-none"
-                    ref={inputRef}
-                    defaultValue={item.title}
-                    id={item.id}
-                  />
-                </label>
-                <ActionButton onClick={handleConfirmEdit} icon={confirm} />
-                <ActionButton onClick={handleEdit} icon={abort} />
-              </div>
-              {error.length ? (
-                <span className="basis-full text-sm text-red-500">{error}</span>
-              ) : null}
-            </div>
-          </>
-        )}
+          <span className="flex items-center gap-x-2 text-white">
+            <ActionButton
+              icon={edit}
+              onClick={() => setIsEditing((prev) => !prev)}
+            />
+
+            <ActionButton icon={del} onClick={() => setOpen(true)} />
+          </span>
+          {RightExtraRender?.(item)}
+        </RowLayout>
+
+        {isEditing && EditItem(item, setIsEditing)}
       </motion.div>
     </>
   );

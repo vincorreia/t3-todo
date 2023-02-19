@@ -1,63 +1,75 @@
-import React, { useImperativeHandle, useRef } from "react";
+import { Input } from "./Input";
+import React, { useCallback, useImperativeHandle, useRef } from "react";
 import { type z, ZodError } from "zod";
 import { inputSchema } from "../../schemas";
 import type { InputRef } from "../../types/Ref";
+import { Label } from "./Label";
+import { InputError } from "./InputError";
+import { InputWrapper } from "./InputWrapper";
+import { useFormValidation } from "../molecules/FormValidationContext";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  name: string;
   validationSchema?: z.ZodString;
   wrapperClassName?: string;
 }
 
 export const TextField = React.forwardRef<InputRef, Props>(
   (
-    { label, validationSchema = inputSchema, wrapperClassName, ...props },
+    { label, validationSchema = inputSchema, wrapperClassName, name, ...props },
     ref
   ) => {
-    const [error, setError] = React.useState<string | undefined>(undefined);
+    const { error, setError } = useFormValidation(name);
 
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const validate = (value: unknown) => {
-      let validatedValue: string | undefined;
-      try {
-        validatedValue = validationSchema.parse(value);
-        setError(undefined);
-      } catch (error) {
-        if (error instanceof ZodError) {
-          setError(error.issues?.[0]?.message);
+    const validate = useCallback(
+      (value: unknown) => {
+        let validatedValue: string | undefined;
+        try {
+          validatedValue = validationSchema.parse(value);
+          setError(undefined);
+        } catch (error) {
+          if (error instanceof ZodError) {
+            const errorMessage = error.issues?.[0]?.message;
+            setError(errorMessage);
+          }
         }
-      }
 
-      return validatedValue;
+        return validatedValue;
+      },
+      [validationSchema, setError]
+    );
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (error) {
+        validate(e.target.value);
+      }
     };
 
-    useImperativeHandle(ref, () => {
-      return {
-        validate,
-        inputRef,
-      };
-    });
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          validate,
+          inputRef,
+        };
+      },
+      [validate]
+    );
 
     return (
-      <div className={`flex w-full flex-col gap-y-2 ${wrapperClassName ?? ""}`}>
-        {!!label && (
-          <label htmlFor={props.id} className="text-sm font-semibold">
-            {label}
-          </label>
-        )}
-        <input
+      <InputWrapper className={wrapperClassName}>
+        {!!label && <Label>{label}</Label>}
+        <Input
           {...props}
-          type={props.type ?? "text"}
-          className="rounded-l-sm border border-white p-2 text-black focus:outline-none"
+          type={props.type}
           ref={inputRef}
+          onChange={handleChange}
         />
-        {error && (
-          <span className="w-full text-sm font-semibold text-red-500">
-            {error}
-          </span>
-        )}
-      </div>
+        {error && <InputError>{error}</InputError>}
+      </InputWrapper>
     );
   }
 );

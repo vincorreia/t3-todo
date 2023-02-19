@@ -1,25 +1,44 @@
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type {
+  IconDefinition,
+  SizeProp,
+} from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DISABLED_CLASSES } from "../../consts";
+import { ACTIVE_CLASS, DISABLED_CLASSES } from "../../consts";
 import { useToastAtom } from "../../hooks/atoms";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconDefinition;
+  active?: boolean;
+  iconSize?: SizeProp;
 }
 
 export const ActionButton: React.FC<Props> = ({
   icon,
+  iconSize = "1x",
   disabled,
   type,
+  active,
+  className,
   ...props
 }) => {
   const [{ type: toastType }] = useToastAtom();
   const isDisabled = disabled || toastType === "loading";
 
-  const classes = [props.className];
+  const classes = [];
+
+  if (className) {
+    classes.push(className);
+  }
 
   if (isDisabled) {
-    classes.push(DISABLED_CLASSES);
+    classes.push(
+      DISABLED_CLASSES,
+      "text-gray-600 hover:text-gray-600 active:text-gray-600"
+    );
+  }
+
+  if (active) {
+    classes.push(ACTIVE_CLASS);
   }
 
   return (
@@ -29,7 +48,7 @@ export const ActionButton: React.FC<Props> = ({
       disabled={isDisabled}
       {...props}
     >
-      <FontAwesomeIcon icon={icon} />
+      <FontAwesomeIcon icon={icon} size={iconSize} />
     </button>
   );
 };

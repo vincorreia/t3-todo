@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { validateItem } from "../../Validations";
+import { validateItem, validateTodoAmount } from "../../Validations";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const todoRouter = createTRPCRouter({
@@ -13,27 +13,15 @@ export const todoRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const todoList = await ctx.prisma.todolist.findUnique({
+      const dbTodolist = await ctx.prisma.todolist.findUnique({
         where: {
           id: input.todolistId,
         },
       });
 
-      validateItem(ctx.session.user.id, todoList);
+      const todoList = validateItem(ctx.session.user.id, dbTodolist);
 
-      if (todoList?.type === "SHOPPING_TODO" && !input.amount) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Amount is required for shopping todo",
-        });
-      }
-
-      if (todoList?.type === "TODO" && input.amount) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Amount is not allowed for general todo",
-        });
-      }
+      validateTodoAmount(todoList.type, input.amount);
 
       const newTodo = await ctx.prisma.todo.create({
         data: {
@@ -72,16 +60,26 @@ export const todoRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         title: z.string(),
+        amount: z.number().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const todo = await ctx.prisma.todo.findUnique({
+      const dbTodo = await ctx.prisma.todo.findUnique({
         where: {
           id: input.id,
         },
+        include: {
+          todolist: {
+            select: {
+              type: true,
+            },
+          },
+        },
       });
 
-      validateItem(ctx.session.user.id, todo);
+      const todo = validateItem(ctx.session.user.id, dbTodo);
+
+      validateTodoAmount(todo.todolist.type, input.amount);
 
       const updatedTodo = await ctx.prisma.todo.update({
         where: {
@@ -89,6 +87,7 @@ export const todoRouter = createTRPCRouter({
         },
         data: {
           title: input.title,
+          amount: input.amount,
         },
       });
 
@@ -102,7 +101,6 @@ export const todoRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-
       const todo = await ctx.prisma.todo.findUnique({
         where: {
           id: input.id,
@@ -110,13 +108,66 @@ export const todoRouter = createTRPCRouter({
       });
 
       validateItem(ctx.session.user.id, todo);
-      
+
       const updatedTodo = await ctx.prisma.todo.update({
         where: {
           id: input.id,
         },
         data: {
           done: input.done,
+        },
+      });
+
+      return updatedTodo;
+    }),
+  increaseOrDecrease: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        amount: z.enum(["1", "-1"]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const amount = parseInt(input.amount) as 1 | -1;
+      const dbTodo = await ctx.prisma.todo.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          todolist: {
+            select: {
+              type: true,
+            },
+          },
+        },
+      });
+
+      const todo = validateItem(ctx.session.user.id, dbTodo);
+
+      if (todo.todolist.type === "TODO") {
+        throw new TRPCError({
+          code: "METHOD_NOT_SUPPORTED",
+          message: "You can't increase or decrease a general todo item",
+        });
+      }
+
+      const todoAmount = todo.amount as number;
+
+      if (todoAmount + amount < 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't decrease a todo item below 1",
+        });
+      }
+
+      const updatedTodo = await ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          amount: {
+            increment: amount,
+          },
         },
       });
 

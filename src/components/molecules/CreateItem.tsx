@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState, type MutableRefObject } from "react";
+import { type RefObject, useRef, useState } from "react";
 import { Button } from "../atoms/Button";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -8,24 +7,48 @@ import { TextField } from "../atoms/TextField";
 import type { InputRef } from "../../types/Ref";
 import type { z } from "zod";
 import { useToastAtom } from "../../hooks/atoms";
+import { ICONS } from "../../consts";
+import {
+  useClearErrors,
+  useErrorExists,
+  withFormValidation,
+} from "./FormValidationContext";
 
 type Props = {
-  handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
+  handleCreateTodo: (ref: RefObject<InputRef | null>) => void | Promise<void>;
   validationSchema?: z.ZodString;
+  ExtraFields?: React.ReactElement;
 };
-export const CreateItem: React.FC<Props> = ({
+
+const initialClasses = ["flex h-full gap-x-4"];
+const CreateItem = ({
   handleCreateTodo,
   validationSchema,
-}) => {
+  ExtraFields,
+}: Props) => {
   const createItemInput = useRef<InputRef | null>(null);
+  const hasError = useErrorExists();
+  const clearErrors = useClearErrors();
 
   const [open, setOpen] = useState(false);
 
+  const classes = [...initialClasses];
+
   const handleOpen = () => {
     setOpen((prev) => !prev);
+    clearErrors();
   };
 
-  const [{ type }] = useToastAtom();
+  if (hasError) {
+    classes.push("pb-5");
+  }
+
+  const [{ type: toastType }] = useToastAtom();
+
+  const handleClickCreate = () => {
+    !hasError && void handleCreateTodo(createItemInput);
+  };
+
   return (
     <motion.div
       layout="position"
@@ -33,11 +56,11 @@ export const CreateItem: React.FC<Props> = ({
     >
       <Button onClick={handleOpen} className="flex w-fit items-center gap-x-2">
         <span>New Item</span>
-        <FontAwesomeIcon icon={open ? faArrowDown : faArrowUp} />
+        <FontAwesomeIcon icon={open ? ICONS.ARROW_DOWN : ICONS.ARROW_UP} />
       </Button>
       <AnimatePresence presenceAffectsLayout>
         {open && (
-          <motion.label
+          <motion.div
             initial={{
               opacity: 0,
               y: "-100%",
@@ -54,24 +77,29 @@ export const CreateItem: React.FC<Props> = ({
               },
             }}
             layout
-            htmlFor="createItem"
-            className="grid w-1/3 min-w-[16rem] grid-cols-3 items-start"
+            className="flex w-full max-w-[18rem] flex-col gap-y-2"
           >
-            <TextField
-              ref={createItemInput}
-              validationSchema={validationSchema}
-              wrapperClassName="col-span-2"
-            />
+            <span className={classes.join(" ")}>
+              <TextField
+                name="Name"
+                ref={createItemInput}
+                validationSchema={validationSchema}
+                label="Name"
+                wrapperClassName="flex-grow"
+              />
+              {ExtraFields}
+            </span>
             <Button
-              onClick={handleCreateTodo(createItemInput)}
-              disabled={type === "loading"}
-              className="rounded-r-sm rounded-l-none !border text-white"
+              onClick={handleClickCreate}
+              disabled={toastType === "loading"}
             >
               Create
             </Button>
-          </motion.label>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
   );
 };
+
+export default withFormValidation(CreateItem);
