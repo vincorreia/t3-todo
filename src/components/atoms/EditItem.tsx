@@ -1,41 +1,41 @@
+import { type RefObject, useRef } from "react";
 import { ICONS } from "../../consts";
 import { ActionButton } from "./ActionButton";
-import { RowLayout } from "./RowLayout";
+import { TextField } from "./TextField";
+import type { InputRef } from "../../types";
 
 type Props<ItemType> = {
   item: ItemType;
-  inputRef: React.RefObject<HTMLInputElement>;
-  handleConfirmEdit: () => void;
-  handleEdit: () => void;
-  error: string;
+  confirmEdit: (ref: RefObject<InputRef>) => () => void;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  ExtraField?: React.ReactNode;
 };
-export const EditItem = <ItemType extends { id: string; title: string }>({
+export const EditItem = <ItemType extends { title: string }>({
   item,
-  inputRef,
-  handleConfirmEdit,
-  handleEdit,
-  error,
+  confirmEdit,
+  setIsEditing,
+  ExtraField,
 }: Props<ItemType>) => {
+  const textFieldRef = useRef<InputRef | null>(null);
+  const handleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+
   return (
-    <RowLayout>
-      <div className="flex w-full flex-col text-white">
-        <div className="flex w-full items-center justify-between gap-x-2">
-          <label htmlFor={item.id} className="w-full">
-            <input
-              type="text"
-              className="h-full w-full rounded-sm py-1 px-2 text-black outline-none"
-              ref={inputRef}
-              defaultValue={item.title}
-              id={item.id}
-            />
-          </label>
-          <ActionButton onClick={handleConfirmEdit} icon={ICONS.ACCEPT} />
-          <ActionButton onClick={handleEdit} icon={ICONS.ABORT} />
-        </div>
-        {error.length ? (
-          <span className="basis-full text-sm text-red-500">{error}</span>
-        ) : null}
-      </div>
-    </RowLayout>
+    <div className="flex w-full items-center gap-x-4 p-2">
+      {ExtraField}
+      <TextField
+        label="Name"
+        ref={textFieldRef}
+        defaultValue={item.title}
+        wrapperClassName="flex-grow min-w-0"
+      />
+      <ActionButton
+        onClick={confirmEdit(textFieldRef)}
+        icon={ICONS.ACCEPT}
+        className="pt-5"
+      />
+      <ActionButton onClick={handleEdit} icon={ICONS.ABORT} className="pt-5" />
+    </div>
   );
 };

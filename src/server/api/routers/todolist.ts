@@ -4,9 +4,6 @@ import { validateItem } from "../../Validations";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-
-
-
 export const todolistRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todolist.findMany({
@@ -85,11 +82,15 @@ export const todolistRouter = createTRPCRouter({
 
       validateItem(ctx.session.user.id, todoList);
 
-      if (type && todoList?.todos.length) {
+      if (type !== todoList?.type && todoList?.todos?.length) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Cannot change type of todolist with todos",
         });
+      }
+
+      if (type === todoList?.type && title === todoList?.title) {
+        return todoList;
       }
 
       return ctx.prisma.todolist.update({
@@ -98,7 +99,7 @@ export const todolistRouter = createTRPCRouter({
         },
         data: {
           title,
-          type: todoList?.todos.length ? todoList.type : type,
+          type,
         },
       });
     }),

@@ -14,6 +14,8 @@ type Props = {
   validationSchema?: z.ZodString;
   ExtraFields?: React.ReactElement;
 };
+
+const initialClasses = ["flex h-full gap-x-4"];
 export const CreateItem: React.FC<Props> = ({
   handleCreateTodo,
   validationSchema,
@@ -23,11 +25,28 @@ export const CreateItem: React.FC<Props> = ({
 
   const [open, setOpen] = useState(false);
 
+  const [classes, setClasses] = useState(initialClasses);
   const handleOpen = () => {
     setOpen((prev) => !prev);
+    setClasses((prev) => {
+      if (!open) {
+        return prev.filter((className) => className !== "pb-5");
+      }
+
+      return prev;
+    });
+  };
+
+  const handleError = (error: string | undefined) => {
+    if (error) {
+      setClasses((prev) => [...prev, "pb-5"]);
+    } else {
+      setClasses((prev) => prev.filter((className) => className !== "pb-5"));
+    }
   };
 
   const [{ type: toastType }] = useToastAtom();
+
   return (
     <motion.div
       layout="position"
@@ -56,13 +75,14 @@ export const CreateItem: React.FC<Props> = ({
               },
             }}
             layout
-            className="flex w-full max-w-[18rem] flex-col gap-y-2 "
+            className="flex w-full max-w-[18rem] flex-col gap-y-2"
           >
-            <span className="flex h-full gap-x-4">
+            <span className={classes.join(" ")}>
               <TextField
                 ref={createItemInput}
                 validationSchema={validationSchema}
                 label="Name"
+                handleError={handleError}
               />
               {ExtraFields}
             </span>

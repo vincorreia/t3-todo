@@ -10,10 +10,8 @@ export const Tooltip: React.FC<Props> = ({ text, children }) => {
   return (
     <div className="relative w-full">
       {open && (
-        <span className="absolute bottom-6 bg-black bg-opacity-90 p-1 rounded-sm">
-          <span className="whitespace-nowrap text-sm font-normal leading-tight">
-            {text}
-          </span>
+        <span className="absolute bottom-6 whitespace-nowrap rounded-sm bg-black bg-opacity-90 p-1 text-sm font-normal leading-tight z-20">
+          {text}
         </span>
       )}
       {React.cloneElement(children, {

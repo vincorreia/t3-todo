@@ -3,9 +3,9 @@ import {
   faArrowUp,
   faArrowUpRightFromSquare,
   faCartShopping,
-  faCircleCheck,
-  faCircleXmark,
+  faCheck,
   faFileCircleCheck,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const TOAST_INITIAL_VAL = {
@@ -23,7 +23,7 @@ export const ICONS = {
   ARROW_UP: faArrowUp,
   SHOPPING_TODO: faCartShopping,
   TODO: faFileCircleCheck,
-  ABORT: faCircleXmark,
-  ACCEPT: faCircleCheck,
+  ABORT: faX,
+  ACCEPT: faCheck,
   ACCESS: faArrowUpRightFromSquare,
 };
