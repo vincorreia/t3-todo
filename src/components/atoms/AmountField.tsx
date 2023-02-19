@@ -10,6 +10,7 @@ type Props = {
   setAmount: Dispatch<SetStateAction<number>>;
   name: string;
   handleError?: (error: string | undefined) => void;
+  className?: string;
 };
 
 export const AmountField: React.FC<Props> = ({
@@ -17,6 +18,7 @@ export const AmountField: React.FC<Props> = ({
   setAmount,
   handleError,
   name,
+  className,
 }) => {
   const { error, setError } = useFormValidation(name);
 
@@ -34,9 +36,12 @@ export const AmountField: React.FC<Props> = ({
       setAmount(+e.target.value);
     }
   };
-
+  const wrapperClasses = ["min-w-0"];
+  if (className) {
+    wrapperClasses.push(className);
+  }
   return (
-    <InputWrapper className="min-w-0">
+    <InputWrapper className={wrapperClasses.join(" ")}>
       <Label>Amount</Label>
       <Input onChange={onChange} pattern="[0-9]*" value={amount} />
       {error && <InputError>{error}</InputError>}

@@ -1,20 +1,15 @@
 import { type RefObject, useState } from "react";
+import { extrafield } from "../../consts";
 import { useCreateToast } from "../../hooks/atoms";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import type { InputRef, TodolistType } from "../../types";
 import { api } from "../../utils/api";
-import { AmountField } from "../atoms/AmountField";
 import CreateItem from "../molecules/CreateItem";
 
 type Props = {
   itemId: string;
   type: TodolistType;
 };
-
-const extrafield = {
-  SHOPPING_TODO: AmountField,
-  TODO: undefined,
-} as Record<TodolistType, undefined | typeof AmountField>;
 
 export const CreateTodo: React.FC<Props> = ({ itemId, type }) => {
   const { loadingToast } = useCreateToast();

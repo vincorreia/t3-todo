@@ -37,7 +37,7 @@ const ItemPage: React.FC = () => {
   const { onSuccess, onError } = useDefaultHandlers({ type: "todo", itemId });
   const [{ type: toastType }] = useToastAtom();
 
-  const item = api.todolists.get.useQuery(itemId, { onError });
+  const todoList = api.todolists.get.useQuery(itemId, { onError });
 
   const deleteTodo = api.todo.delete.useMutation({
     onSuccess,
@@ -63,7 +63,7 @@ const ItemPage: React.FC = () => {
       });
     };
 
-  if (item.isLoading || !item.data) {
+  if (todoList.isLoading || !todoList.data) {
     return (
       <>
         <Head>
@@ -77,18 +77,18 @@ const ItemPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>{item.data.title}</title>
+        <title>{todoList.data.title}</title>
       </Head>
       <Link href="/" className="absolute top-[5%] left-[10%]">
         <FontAwesomeIcon icon={faArrowLeft} size="2x" />
       </Link>
       <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {item.data.title}
+        {todoList.data.title}
       </h1>
       <LayoutGroup>
-        <CreateTodo itemId={itemId} type={item.data.type} />
+        <CreateTodo itemId={itemId} type={todoList.data.type} />
         <Table
-          items={item.data.todos}
+          items={todoList.data.todos}
           functions={{
             handleDelete,
           }}
@@ -105,6 +105,7 @@ const ItemPage: React.FC = () => {
               item={item}
               setIsEditing={setIsEditing}
               todolistId={itemId}
+              type={todoList.data?.type ?? "TODO"}
             />
           )}
         />

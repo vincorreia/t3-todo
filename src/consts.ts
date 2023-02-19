@@ -7,6 +7,8 @@ import {
   faFileCircleCheck,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
+import { AmountField } from "./components/atoms/AmountField";
+import type { TodolistType } from "./types";
 
 export const TOAST_INITIAL_VAL = {
   message: undefined,
@@ -27,3 +29,8 @@ export const ICONS = {
   ACCEPT: faCheck,
   ACCESS: faArrowUpRightFromSquare,
 };
+
+export const extrafield = {
+  SHOPPING_TODO: AmountField,
+  TODO: undefined,
+} as Record<TodolistType, undefined | typeof AmountField>;

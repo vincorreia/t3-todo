@@ -4,7 +4,7 @@ type Props = {
 };
 
 export const InputWrapper: React.FC<Props> = ({ className, children }) => {
-  const classes = ["relative flex flex-grow flex-col gap-y-2"];
+  const classes = ["relative flex flex-col gap-y-2"];
 
   if (className) {
     classes.push(className);
