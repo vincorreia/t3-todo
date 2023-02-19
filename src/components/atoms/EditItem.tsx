@@ -13,6 +13,7 @@ type Props<ItemType> = {
   confirmEdit: (ref: RefObject<InputRef>) => void | Promise<void>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   ExtraField?: React.ReactNode;
+  extraFieldPosition?: "left" | "right";
 };
 export const EditItem = withFormValidation(
   <ItemType extends { title: string }>({
@@ -20,6 +21,7 @@ export const EditItem = withFormValidation(
     confirmEdit,
     setIsEditing,
     ExtraField,
+    extraFieldPosition = "left",
   }: Props<ItemType>) => {
     const textFieldRef = useRef<InputRef | null>(null);
     const hasError = useErrorExists();
@@ -33,7 +35,7 @@ export const EditItem = withFormValidation(
 
     return (
       <div className="flex w-full items-center gap-x-4 p-2">
-        {ExtraField}
+        {extraFieldPosition === "left" && ExtraField}
         <TextField
           label="Name"
           name="Name"
@@ -41,6 +43,7 @@ export const EditItem = withFormValidation(
           defaultValue={item.title}
           wrapperClassName="flex-grow min-w-0"
         />
+        {extraFieldPosition === "right" && ExtraField}
         <ActionButton
           onClick={handleConfirmEdit}
           icon={ICONS.ACCEPT}

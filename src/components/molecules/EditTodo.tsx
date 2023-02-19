@@ -63,6 +63,7 @@ export const EditTodo: React.FC<Props> = ({
           </span>
         )
       }
+      extraFieldPosition="right"
     />
   );
 };
