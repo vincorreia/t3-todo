@@ -15,6 +15,7 @@ import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import { CreateTodo } from "../../components/organisms/CreateTodo";
 import { EditTodo } from "../../components/molecules/EditTodo";
 import { AmountTag } from "../../components/atoms/AmountTag";
+import type { Todo } from "@prisma/client";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -75,6 +76,11 @@ const ItemPage: React.FC = () => {
     );
   }
 
+  const getRightExtraRender =
+    todoList.data.type === "SHOPPING_TODO"
+      ? (todo: Todo) => <AmountTag amount={todo.amount} />
+      : undefined;
+
   return (
     <>
       <Head>
@@ -101,7 +107,7 @@ const ItemPage: React.FC = () => {
               disabled={toastType === "loading"}
             />
           )}
-          RightExtraRender={(todo) => <AmountTag amount={todo.amount} />}
+          RightExtraRender={getRightExtraRender}
           EditItem={(item, setIsEditing) => (
             <EditTodo
               item={item}
