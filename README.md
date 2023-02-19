@@ -98,9 +98,9 @@ Implementation example:
 #### Features
 - [x] Create shopping list instead of a regular todolist
 - [x] Convert a regular todolist to shopping list
-- [ ] If the todolist is a shopping list, todo items should display it's amount
+- [x] If the todolist is a shopping list, todo items should display it's amount
 - [ ] If the todolist is a shopping list, it should be possible to increase or decrease the item's amount
-- [ ] Should be possible to edit the item's amount on todo item edition screen
+- [x] Should be possible to edit the item's amount on todo item edition screen
 
 
 ### Backend
@@ -109,7 +109,7 @@ Implementation example:
 - [x] Validate if a todolist is empty on edit endpoint, in case it's not, it should not be possible to change it's type
 - [x] Create shopping list instead of a regular todolist
 - [ ] Endpoint for increasing/decreasing amount of an item, should validate either the todolist is of type shopping list, if it's not it should return an error
-- [ ] Adapt todo item edit endpoint to be possible to edit the amount as well, should validate either the todolist is of type shopping list, if it's not it should return an error
+- [x] Adapt todo item edit endpoint to be possible to edit the amount as well, should validate either the todolist is of type shopping list, if it's not it should return an error
 
 ## Technologies used
 - TypeScript as the main language of the project

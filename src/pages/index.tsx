@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 const Home: NextPage = () => {
   const { loadingToast } = useCreateToast();
 
-  const { onSuccess, onError } = useDefaultHandlers("todolist");
+  const { onSuccess, onError } = useDefaultHandlers({ type: "todolist" });
 
   const allTodoLists = api.todolists.getAll.useQuery(undefined, { onError });
 

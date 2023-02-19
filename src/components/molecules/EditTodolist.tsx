@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const EditTodolist: React.FC<Props> = ({ item, setIsEditing }) => {
-  const { onSuccess, onError } = useDefaultHandlers("todolist");
+  const { onSuccess, onError } = useDefaultHandlers({ type: "todolist" });
 
   const [type, setType] = useState(item.type);
 
@@ -33,7 +33,7 @@ export const EditTodolist: React.FC<Props> = ({ item, setIsEditing }) => {
     });
   };
 
-  const handleConfirmEdit = (ref: RefObject<InputRef>) => () => {
+  const handleConfirmEdit = (ref: RefObject<InputRef>) => {
     const input = ref.current?.inputRef.current;
     const title = ref.current?.validate(input?.value);
     if (input && title) {
