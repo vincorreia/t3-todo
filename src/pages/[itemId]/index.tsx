@@ -8,29 +8,12 @@ import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
 import { LayoutGroup } from "framer-motion";
 import { Loading } from "../../components/atoms/Loading";
-import { type GetServerSideProps } from "next";
-import { getSSGHelpers } from "../../utils/ssg";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import { CreateTodo } from "../../components/organisms/CreateTodo";
 import { EditTodo } from "../../components/molecules/EditTodo";
 import { AmountTag } from "../../components/atoms/AmountTag";
 import type { Todo } from "@prisma/client";
 import { CheckTodo } from "../../components/molecules/CheckTodo";
-
-export const getServerSideProps: GetServerSideProps<{
-  itemId: string;
-}> = async (context) => {
-  const ssg = await getSSGHelpers(context.req, context.res);
-  const itemId = context.params?.itemId as string;
-
-  await ssg.todolists.get.prefetch(itemId);
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      itemId,
-    },
-  };
-};
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
