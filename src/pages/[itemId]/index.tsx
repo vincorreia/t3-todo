@@ -1,20 +1,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import type { RefObject, MutableRefObject } from "react";
-import { CreateItem } from "../../components/molecules/CreateItem";
 import { useCreateToast, useToastAtom } from "../../hooks/atoms";
 import { api } from "../../utils/api";
 import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
 import { LayoutGroup } from "framer-motion";
-import type { InputRef } from "../../types/Ref";
 import { Loading } from "../../components/atoms/Loading";
 import { type GetServerSideProps } from "next";
 import { getSSGHelpers } from "../../utils/ssg";
 import { Checkbox } from "../../components/atoms/Checkbox";
-import { EditItem } from "../../components/atoms/EditItem";
+import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
+import { CreateTodo } from "../../components/organisms/CreateTodo";
+import { EditTodo } from "../../components/molecules/EditTodo";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -34,31 +33,13 @@ export const getServerSideProps: GetServerSideProps<{
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
   const { itemId } = query as { itemId: string };
-  const { successToast, errorToast, loadingToast } = useCreateToast();
+  const { loadingToast } = useCreateToast();
+  const { onSuccess, onError } = useDefaultHandlers({ type: "todo", itemId });
   const [{ type: toastType }] = useToastAtom();
-  const onError = <DataType extends { message: string }>(error: DataType) => {
-    errorToast(error.message);
-  };
 
   const item = api.todolists.get.useQuery(itemId, { onError });
 
-  const apiContext = api.useContext();
-
-  const onSuccess = async () => {
-    await apiContext.todolists.get.invalidate(itemId);
-    successToast("The data has been successfully updated!");
-  };
-  const createTodo = api.todo.create.useMutation({
-    onSuccess,
-    onError,
-  });
-
   const deleteTodo = api.todo.delete.useMutation({
-    onSuccess,
-    onError,
-  });
-
-  const editTodo = api.todo.update.useMutation({
     onSuccess,
     onError,
   });
@@ -82,40 +63,6 @@ const ItemPage: React.FC = () => {
       });
     };
 
-  const handleCreateTodo = (ref?: MutableRefObject<InputRef | null>) => {
-    return async () => {
-      const input = ref?.current?.inputRef.current;
-
-      const parsedInput = ref?.current?.validate(input?.value);
-
-      if (input && parsedInput) {
-        loadingToast("Creating...");
-        const response = await createTodo.mutateAsync({
-          title: parsedInput,
-          todolistId: itemId,
-        });
-        if (response) {
-          input.value = "";
-        }
-      }
-    };
-  };
-
-  const handleEdit = (id: string, title: string) => {
-    loadingToast("Updating...");
-    editTodo.mutate({
-      id,
-      title,
-    });
-  };
-
-  const handleConfirmEdit = (ref: RefObject<InputRef>) => () => {
-    const input = ref.current?.inputRef.current;
-    const parsedInput = ref.current?.validate(input?.value);
-    if (input && parsedInput) {
-      handleEdit(itemId, parsedInput);
-    }
-  };
   if (item.isLoading || !item.data) {
     return (
       <>
@@ -139,7 +86,7 @@ const ItemPage: React.FC = () => {
         {item.data.title}
       </h1>
       <LayoutGroup>
-        <CreateItem handleCreateTodo={handleCreateTodo} />
+        <CreateTodo itemId={itemId} type={item.data.type} />
         <Table
           items={item.data.todos}
           functions={{
@@ -154,10 +101,10 @@ const ItemPage: React.FC = () => {
             />
           )}
           EditItem={(item, setIsEditing) => (
-            <EditItem
-              confirmEdit={handleConfirmEdit}
+            <EditTodo
               item={item}
               setIsEditing={setIsEditing}
+              todolistId={itemId}
             />
           )}
         />

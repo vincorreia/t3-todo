@@ -8,6 +8,11 @@ import type { InputRef } from "../../types/Ref";
 import type { z } from "zod";
 import { useToastAtom } from "../../hooks/atoms";
 import { ICONS } from "../../consts";
+import {
+  useClearErrors,
+  useErrorExists,
+  withFormValidation,
+} from "./FormValidationContext";
 
 type Props = {
   handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
@@ -16,34 +21,27 @@ type Props = {
 };
 
 const initialClasses = ["flex h-full gap-x-4"];
-export const CreateItem: React.FC<Props> = ({
+const CreateItem = ({
   handleCreateTodo,
   validationSchema,
   ExtraFields,
-}) => {
+}: Props) => {
   const createItemInput = useRef<InputRef | null>(null);
+  const hasError = useErrorExists();
+  const clearErrors = useClearErrors();
 
   const [open, setOpen] = useState(false);
 
-  const [classes, setClasses] = useState(initialClasses);
+  const classes = [...initialClasses];
+
   const handleOpen = () => {
     setOpen((prev) => !prev);
-    setClasses((prev) => {
-      if (!open) {
-        return prev.filter((className) => className !== "pb-5");
-      }
-
-      return prev;
-    });
+    clearErrors();
   };
 
-  const handleError = (error: string | undefined) => {
-    if (error) {
-      setClasses((prev) => [...prev, "pb-5"]);
-    } else {
-      setClasses((prev) => prev.filter((className) => className !== "pb-5"));
-    }
-  };
+  if (hasError) {
+    classes.push("pb-5");
+  }
 
   const [{ type: toastType }] = useToastAtom();
 
@@ -79,10 +77,10 @@ export const CreateItem: React.FC<Props> = ({
           >
             <span className={classes.join(" ")}>
               <TextField
+                name="Name"
                 ref={createItemInput}
                 validationSchema={validationSchema}
                 label="Name"
-                handleError={handleError}
               />
               {ExtraFields}
             </span>
@@ -98,3 +96,5 @@ export const CreateItem: React.FC<Props> = ({
     </motion.div>
   );
 };
+
+export default withFormValidation(CreateItem);

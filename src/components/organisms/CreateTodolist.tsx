@@ -4,10 +4,10 @@ import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import type { InputRef, TodolistType } from "../../types";
 import { api } from "../../utils/api";
 import { TypeSelector } from "../atoms/TypeSelector";
-import { CreateItem } from "../molecules/CreateItem";
+import CreateItem from "../molecules/CreateItem";
 
 export const CreateTodolist: React.FC = () => {
-  const { onError, onSuccess } = useDefaultHandlers("todolist");
+  const { onError, onSuccess } = useDefaultHandlers({ type: "todolist" });
   const { loadingToast } = useCreateToast();
   const [type, setType] = useState<TodolistType>("TODO");
   const todolistsMutation = api.todolists.create.useMutation({

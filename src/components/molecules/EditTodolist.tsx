@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const EditTodolist: React.FC<Props> = ({ item, setIsEditing }) => {
-  const { onSuccess, onError } = useDefaultHandlers("todolist");
+  const { onSuccess, onError } = useDefaultHandlers({ type: "todolist" });
 
   const [type, setType] = useState(item.type);
 
