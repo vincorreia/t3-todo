@@ -14,6 +14,7 @@ import { Checkbox } from "../../components/atoms/Checkbox";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import { CreateTodo } from "../../components/organisms/CreateTodo";
 import { EditTodo } from "../../components/molecules/EditTodo";
+import { AmountTag } from "../../components/atoms/AmountTag";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -100,6 +101,7 @@ const ItemPage: React.FC = () => {
               disabled={toastType === "loading"}
             />
           )}
+          RightExtraRender={(todo) => <AmountTag amount={todo.amount} />}
           EditItem={(item, setIsEditing) => (
             <EditTodo
               item={item}

@@ -5,6 +5,8 @@ import {
   faCartShopping,
   faCheck,
   faFileCircleCheck,
+  faMinusCircle,
+  faPlusCircle,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
 import { AmountField } from "./components/atoms/AmountField";
@@ -20,6 +22,9 @@ export const DISABLED_CLASSES = "opacity-50 cursor-not-allowed";
 
 export const ACTIVE_CLASS = "text-[#ff69b4]";
 
+export const PRIMARY_BUTTON_ACTION_CLASSES =
+  "hover:text-[#3C0A8E] active:text-[#4A03AE]";
+
 export const ICONS = {
   ARROW_DOWN: faArrowDown,
   ARROW_UP: faArrowUp,
@@ -28,6 +33,8 @@ export const ICONS = {
   ABORT: faX,
   ACCEPT: faCheck,
   ACCESS: faArrowUpRightFromSquare,
+  PLUS: faPlusCircle,
+  MINUS: faMinusCircle,
 };
 
 export const extrafield = {

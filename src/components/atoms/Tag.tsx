@@ -9,7 +9,7 @@ type Props = {
 };
 export const Tag: React.FC<Props> = ({ children, type = "left" }) => {
   const classes = [
-    "flex h-full items-center justify-center bg-white py-5 px-4 text-[var(--primary)]",
+    "flex h-full items-center justify-center bg-white px-4 text-[var(--primary)]",
   ];
 
   classes.push(typeClasses[type]);

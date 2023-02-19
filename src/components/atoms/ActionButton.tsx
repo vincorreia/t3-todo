@@ -1,4 +1,7 @@
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type {
+  IconDefinition,
+  SizeProp,
+} from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ACTIVE_CLASS, DISABLED_CLASSES } from "../../consts";
 import { useToastAtom } from "../../hooks/atoms";
@@ -6,10 +9,12 @@ import { useToastAtom } from "../../hooks/atoms";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconDefinition;
   active?: boolean;
+  iconSize?: SizeProp;
 }
 
 export const ActionButton: React.FC<Props> = ({
   icon,
+  iconSize = "1x",
   disabled,
   type,
   active,
@@ -35,7 +40,7 @@ export const ActionButton: React.FC<Props> = ({
       disabled={isDisabled}
       {...props}
     >
-      <FontAwesomeIcon icon={icon} />
+      <FontAwesomeIcon icon={icon} size={iconSize} />
     </button>
   );
 };
