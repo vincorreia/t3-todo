@@ -83,7 +83,6 @@ const CreateItem = ({
                 validationSchema={validationSchema}
                 label="Name"
                 wrapperClassName="flex-grow"
-                notShowError
               />
               {ExtraFields}
             </span>

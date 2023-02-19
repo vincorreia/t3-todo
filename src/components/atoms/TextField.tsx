@@ -4,7 +4,6 @@ import { type z, ZodError } from "zod";
 import { inputSchema } from "../../schemas";
 import type { InputRef } from "../../types/Ref";
 import { Label } from "./Label";
-import { InputError } from "./InputError";
 import { InputWrapper } from "./InputWrapper";
 import { useFormValidation } from "../molecules/FormValidationContext";
 
@@ -13,7 +12,6 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   validationSchema?: z.ZodString;
   wrapperClassName?: string;
-  notShowError?: boolean;
 }
 
 export const TextField = React.forwardRef<InputRef, Props>(
@@ -23,7 +21,6 @@ export const TextField = React.forwardRef<InputRef, Props>(
       validationSchema = inputSchema,
       wrapperClassName,
       name,
-      notShowError,
       ...props
     },
     ref
@@ -76,7 +73,6 @@ export const TextField = React.forwardRef<InputRef, Props>(
           ref={inputRef}
           onChange={handleChange}
         />
-        {!notShowError && error && <InputError>{error}</InputError>}
       </InputWrapper>
     );
   }

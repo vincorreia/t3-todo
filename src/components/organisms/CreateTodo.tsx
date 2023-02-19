@@ -45,7 +45,7 @@ export const CreateTodo: React.FC<Props> = ({ itemId, type }) => {
       handleCreateTodo={handleCreateTodo}
       ExtraFields={
         ExtraField && (
-          <ExtraField name="amount" amount={amount} setAmount={setAmount} notShowError />
+          <ExtraField name="amount" amount={amount} setAmount={setAmount} />
         )
       }
     />
