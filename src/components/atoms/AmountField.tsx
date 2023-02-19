@@ -11,6 +11,7 @@ type Props = {
   name: string;
   handleError?: (error: string | undefined) => void;
   className?: string;
+  notShowError?: boolean;
 };
 
 export const AmountField: React.FC<Props> = ({
@@ -19,6 +20,7 @@ export const AmountField: React.FC<Props> = ({
   handleError,
   name,
   className,
+  notShowError,
 }) => {
   const { error, setError } = useFormValidation(name);
 
@@ -51,7 +53,7 @@ export const AmountField: React.FC<Props> = ({
     <InputWrapper className={wrapperClasses.join(" ")}>
       <Label>Amount</Label>
       <Input onChange={onChange} pattern="[0-9]*" value={amount} />
-      {error && <InputError>{error}</InputError>}
+      {!notShowError && error && <InputError>{error}</InputError>}
     </InputWrapper>
   );
 };

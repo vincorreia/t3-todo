@@ -13,11 +13,19 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   validationSchema?: z.ZodString;
   wrapperClassName?: string;
+  notShowError?: boolean;
 }
 
 export const TextField = React.forwardRef<InputRef, Props>(
   (
-    { label, validationSchema = inputSchema, wrapperClassName, name, ...props },
+    {
+      label,
+      validationSchema = inputSchema,
+      wrapperClassName,
+      name,
+      notShowError,
+      ...props
+    },
     ref
   ) => {
     const { error, setError } = useFormValidation(name);
@@ -68,7 +76,7 @@ export const TextField = React.forwardRef<InputRef, Props>(
           ref={inputRef}
           onChange={handleChange}
         />
-        {error && <InputError>{error}</InputError>}
+        {!notShowError && error && <InputError>{error}</InputError>}
       </InputWrapper>
     );
   }
