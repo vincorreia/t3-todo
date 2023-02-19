@@ -97,7 +97,7 @@ Implementation example:
 
 #### Features
 - [x] Create shopping list instead of a regular todolist
-- [ ] Convert a regular todolist to shopping list
+- [x] Convert a regular todolist to shopping list
 - [ ] If the todolist is a shopping list, todo items should display it's amount
 - [ ] If the todolist is a shopping list, it should be possible to increase or decrease the item's amount
 - [ ] Should be possible to edit the item's amount on todo item edition screen
