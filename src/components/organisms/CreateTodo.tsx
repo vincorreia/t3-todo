@@ -21,24 +21,22 @@ export const CreateTodo: React.FC<Props> = ({ itemId, type }) => {
     onError,
   });
 
-  const handleCreateTodo = (ref?: RefObject<InputRef | null>) => {
-    return async () => {
-      const input = ref?.current?.inputRef.current;
+  const handleCreateTodo = async (ref: RefObject<InputRef | null>) => {
+    const input = ref?.current?.inputRef.current;
 
-      const parsedInput = ref?.current?.validate(input?.value);
+    const parsedInput = ref?.current?.validate(input?.value);
 
-      if (input && parsedInput) {
-        loadingToast("Creating...");
-        const response = await createTodo.mutateAsync({
-          title: parsedInput,
-          todolistId: itemId,
-          amount: type === "SHOPPING_TODO" ? amount : undefined,
-        });
-        if (response) {
-          input.value = "";
-        }
+    if (input && parsedInput) {
+      loadingToast("Creating...");
+      const response = await createTodo.mutateAsync({
+        title: parsedInput,
+        todolistId: itemId,
+        amount: type === "SHOPPING_TODO" ? amount : undefined,
+      });
+      if (response) {
+        input.value = "";
       }
-    };
+    }
   };
 
   const ExtraField = extrafield[type];

@@ -14,22 +14,23 @@ export const CreateTodolist: React.FC = () => {
     onSuccess,
     onError,
   });
-  const handleCreateTodo =
-    (createTodoInput?: MutableRefObject<InputRef | null>) => async () => {
-      const input = createTodoInput?.current?.inputRef.current;
-      const parsedValue = createTodoInput?.current?.validate(input?.value);
+  const handleCreateTodo = async (
+    createTodoInput?: MutableRefObject<InputRef | null>
+  ) => {
+    const input = createTodoInput?.current?.inputRef.current;
+    const parsedValue = createTodoInput?.current?.validate(input?.value);
 
-      if (input && parsedValue) {
-        loadingToast("Creating...");
-        const response = await todolistsMutation.mutateAsync({
-          title: parsedValue,
-          type,
-        });
-        if (response) {
-          input.value = "";
-        }
+    if (input && parsedValue) {
+      loadingToast("Creating...");
+      const response = await todolistsMutation.mutateAsync({
+        title: parsedValue,
+        type,
+      });
+      if (response) {
+        input.value = "";
       }
-    };
+    }
+  };
 
   return (
     <CreateItem

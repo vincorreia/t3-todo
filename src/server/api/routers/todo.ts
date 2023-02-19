@@ -90,7 +90,6 @@ export const todoRouter = createTRPCRouter({
         },
       });
 
-      console.log(updatedTodo, input.amount);
       return updatedTodo;
     }),
   check: protectedProcedure

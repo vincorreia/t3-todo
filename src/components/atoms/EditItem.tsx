@@ -3,11 +3,14 @@ import { ICONS } from "../../consts";
 import { ActionButton } from "./ActionButton";
 import { TextField } from "./TextField";
 import type { InputRef } from "../../types";
-import { withFormValidation } from "../molecules/FormValidationContext";
+import {
+  useErrorExists,
+  withFormValidation,
+} from "../molecules/FormValidationContext";
 
 type Props<ItemType> = {
   item: ItemType;
-  confirmEdit: (ref: RefObject<InputRef>) => () => void;
+  confirmEdit: (ref: RefObject<InputRef>) => void | Promise<void>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   ExtraField?: React.ReactNode;
 };
@@ -19,8 +22,13 @@ export const EditItem = withFormValidation(
     ExtraField,
   }: Props<ItemType>) => {
     const textFieldRef = useRef<InputRef | null>(null);
+    const hasError = useErrorExists();
     const handleEdit = () => {
       setIsEditing((prev) => !prev);
+    };
+
+    const handleConfirmEdit = () => {
+      !hasError && void confirmEdit(textFieldRef);
     };
 
     return (
@@ -34,7 +42,7 @@ export const EditItem = withFormValidation(
           wrapperClassName="flex-grow min-w-0"
         />
         <ActionButton
-          onClick={confirmEdit(textFieldRef)}
+          onClick={handleConfirmEdit}
           icon={ICONS.ACCEPT}
           className="pt-5"
         />

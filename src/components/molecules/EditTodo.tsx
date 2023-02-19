@@ -3,24 +3,16 @@ import { type RefObject, useState } from "react";
 import { extrafield } from "../../consts";
 import { useCreateToast } from "../../hooks/atoms";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
-import type { InputRef } from "../../types";
+import type { InputRef, TodolistType } from "../../types";
 import { api } from "../../utils/api";
 import { EditItem } from "../atoms/EditItem";
-
-type ShoppingTodoProps = {
-  item: Todo & { amount: number };
-  type: "SHOPPING_TODO";
-};
-
-type TodoProps = {
-  item: Todo & { amount?: undefined };
-  type: "TODO";
-};
 
 type Props = {
   todolistId: string;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-} & (ShoppingTodoProps | TodoProps);
+  item: Todo;
+  type: TodolistType;
+};
 
 export const EditTodo: React.FC<Props> = ({
   item,
@@ -28,7 +20,7 @@ export const EditTodo: React.FC<Props> = ({
   setIsEditing,
   type,
 }) => {
-  const [amount, setAmount] = useState(item.amount ?? undefined);
+  const [amount, setAmount] = useState(item.amount ?? 0);
   const { loadingToast } = useCreateToast();
   const { onSuccess, onError } = useDefaultHandlers({
     type: "todo",
@@ -45,17 +37,17 @@ export const EditTodo: React.FC<Props> = ({
     editTodo.mutate({
       id,
       title,
-      amount,
+      amount: amount || undefined,
     });
   };
 
-  const handleConfirmEdit = (ref: RefObject<InputRef>) => () => {
+  const handleConfirmEdit = (ref: RefObject<InputRef>) => {
     const input = ref.current?.inputRef.current;
     const parsedInput = ref.current?.validate(input?.value);
     if (input && parsedInput) {
       handleEdit(item.id, parsedInput);
+      setIsEditing(false);
     }
-    setIsEditing(false);
   };
 
   const ExtraField = extrafield[type];

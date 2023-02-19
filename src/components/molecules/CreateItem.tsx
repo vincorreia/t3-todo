@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef, useState, type MutableRefObject } from "react";
+import { type RefObject, useRef, useState } from "react";
 import { Button } from "../atoms/Button";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -15,7 +15,7 @@ import {
 } from "./FormValidationContext";
 
 type Props = {
-  handleCreateTodo: (ref?: MutableRefObject<InputRef | null>) => () => void;
+  handleCreateTodo: (ref: RefObject<InputRef | null>) => void | Promise<void>;
   validationSchema?: z.ZodString;
   ExtraFields?: React.ReactElement;
 };
@@ -44,6 +44,10 @@ const CreateItem = ({
   }
 
   const [{ type: toastType }] = useToastAtom();
+
+  const handleClickCreate = () => {
+    !hasError && void handleCreateTodo(createItemInput);
+  };
 
   return (
     <motion.div
@@ -81,11 +85,12 @@ const CreateItem = ({
                 ref={createItemInput}
                 validationSchema={validationSchema}
                 label="Name"
+                wrapperClassName="flex-grow"
               />
               {ExtraFields}
             </span>
             <Button
-              onClick={handleCreateTodo(createItemInput)}
+              onClick={handleClickCreate}
               disabled={toastType === "loading"}
             >
               Create

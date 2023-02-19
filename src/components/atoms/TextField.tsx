@@ -42,6 +42,12 @@ export const TextField = React.forwardRef<InputRef, Props>(
       [validationSchema, setError]
     );
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (error) {
+        validate(e.target.value);
+      }
+    };
+
     useImperativeHandle(
       ref,
       () => {
@@ -56,7 +62,12 @@ export const TextField = React.forwardRef<InputRef, Props>(
     return (
       <InputWrapper className={wrapperClassName}>
         {!!label && <Label>{label}</Label>}
-        <Input {...props} type={props.type} ref={inputRef} />
+        <Input
+          {...props}
+          type={props.type}
+          ref={inputRef}
+          onChange={handleChange}
+        />
         {error && <InputError>{error}</InputError>}
       </InputWrapper>
     );

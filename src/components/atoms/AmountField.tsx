@@ -24,9 +24,16 @@ export const AmountField: React.FC<Props> = ({
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newError = (() => {
-      if (e.target.validity.valid) {
+      const isValid = e.target.validity.valid;
+      const isZero = +e.target.value === 0;
+      if (isValid && !isZero) {
         return undefined;
       }
+
+      if (isZero) {
+        return "Amount cannot be zero";
+      }
+
       return "Invalid character";
     })();
     setError(newError);
