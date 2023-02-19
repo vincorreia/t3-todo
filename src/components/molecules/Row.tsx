@@ -67,7 +67,7 @@ export const Row = <ItemType extends { id: string; title: string }>({
           <span className="flex-grow py-1">{item.title}</span>
 
           <span className="flex items-center gap-x-2 text-white">
-            <ActionButton icon={edit} onClick={() => setIsEditing(true)} />
+            <ActionButton icon={edit} onClick={() => setIsEditing(prev => !prev)} />
 
             <ActionButton icon={del} onClick={() => setOpen(true)} />
           </span>

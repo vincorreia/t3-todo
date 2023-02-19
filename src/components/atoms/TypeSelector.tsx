@@ -5,12 +5,15 @@ import { Tooltip } from "./Tooltip";
 
 type Props = {
   type: TodolistType;
-  handleChangeType: (newType: TodolistType) => () => void;
+  setType: (newType: TodolistType) => void;
 };
 
-export const TypeSelector: React.FC<Props> = ({ type, handleChangeType }) => {
+export const TypeSelector: React.FC<Props> = ({ type, setType }) => {
+  const handleChangeType = (newType: TodolistType) => () => {
+    setType(newType);
+  };
   return (
-    <div className="flex flex-col gap-y-2 h-full w-fit">
+    <div className="flex h-full w-fit flex-col gap-y-2">
       <p className="text-sm font-semibold">Type</p>
       <div className="flex flex-grow items-center gap-x-2">
         <Tooltip text="Regular todolist">
