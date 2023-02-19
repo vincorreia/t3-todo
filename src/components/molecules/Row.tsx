@@ -36,6 +36,12 @@ export const Row = <ItemType extends { id: string; title: string }>({
     "flex flex-col w-full rounded text-md gap-y-2 lg:text-2xl font-medium capitalize",
   ];
 
+  const layoutClasses: string[] = [];
+
+  if (!RightExtraRender) {
+    layoutClasses.push("pr-4");
+  }
+
   return (
     <>
       <Modal.Main
@@ -62,21 +68,22 @@ export const Row = <ItemType extends { id: string; title: string }>({
         layoutId={item.id}
         className={wrapperClasses.join(" ")}
       >
-        <RowLayout>
+        <RowLayout className={layoutClasses.join(" ")}>
           {LeftExtraRender?.(item)}
           <span className="flex-grow py-1">{item.title}</span>
 
           <span className="flex items-center gap-x-2 text-white">
-            <ActionButton icon={edit} onClick={() => setIsEditing(prev => !prev)} />
+            <ActionButton
+              icon={edit}
+              onClick={() => setIsEditing((prev) => !prev)}
+            />
 
             <ActionButton icon={del} onClick={() => setOpen(true)} />
           </span>
           {RightExtraRender?.(item)}
         </RowLayout>
 
-        {isEditing && (
-          EditItem(item, setIsEditing)
-        )}
+        {isEditing && EditItem(item, setIsEditing)}
       </motion.div>
     </>
   );
