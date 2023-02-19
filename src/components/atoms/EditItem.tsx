@@ -1,22 +1,21 @@
-import { useRef } from "react";
+import { type RefObject, useRef } from "react";
 import { ICONS } from "../../consts";
 import { ActionButton } from "./ActionButton";
 import { TextField } from "./TextField";
 import type { InputRef } from "../../types";
-import type { Todolist } from "@prisma/client";
 
-type Props = {
-  item: Todolist;
-  confirmEdit: () => void;
+type Props<ItemType> = {
+  item: ItemType;
+  confirmEdit: (ref: RefObject<InputRef>) => () => void;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   ExtraField?: React.ReactNode;
 };
-export const EditItem = ({
+export const EditItem = <ItemType extends { title: string }>({
   item,
   confirmEdit,
   setIsEditing,
   ExtraField,
-}: Props) => {
+}: Props<ItemType>) => {
   const textFieldRef = useRef<InputRef | null>(null);
   const handleEdit = () => {
     setIsEditing((prev) => !prev);
@@ -32,7 +31,7 @@ export const EditItem = ({
         wrapperClassName="flex-grow min-w-0"
       />
       <ActionButton
-        onClick={confirmEdit}
+        onClick={confirmEdit(textFieldRef)}
         icon={ICONS.ACCEPT}
         className="pt-5"
       />

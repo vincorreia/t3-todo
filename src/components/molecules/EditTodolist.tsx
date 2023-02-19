@@ -1,5 +1,5 @@
 import type { Todolist } from "@prisma/client";
-import { useRef, useState } from "react";
+import { type RefObject, useState } from "react";
 import { useCreateToast } from "../../hooks/atoms";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import type { EditTodolistParams, InputRef } from "../../types";
@@ -13,7 +13,6 @@ type Props = {
 };
 
 export const EditTodolist: React.FC<Props> = ({ item, setIsEditing }) => {
-  const textFieldRef = useRef<InputRef | null>(null);
   const { onSuccess, onError } = useDefaultHandlers("todolist");
 
   const [type, setType] = useState(item.type);
@@ -34,11 +33,11 @@ export const EditTodolist: React.FC<Props> = ({ item, setIsEditing }) => {
     });
   };
 
-  const handleConfirmEdit = () => {
-    const input = textFieldRef.current?.inputRef.current;
-    const title = textFieldRef.current?.validate(input?.value);
+  const handleConfirmEdit = (ref: RefObject<InputRef>) => () => {
+    const input = ref.current?.inputRef.current;
+    const title = ref.current?.validate(input?.value);
     if (input && title) {
-      confirmEdit({ id: item.id, title, type: item.type });
+      confirmEdit({ id: item.id, title, type });
       setIsEditing(false);
     }
   };

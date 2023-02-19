@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { type MutableRefObject } from "react";
+import type { RefObject, MutableRefObject } from "react";
 import { CreateItem } from "../../components/molecules/CreateItem";
 import { useCreateToast, useToastAtom } from "../../hooks/atoms";
 import { api } from "../../utils/api";
@@ -14,6 +14,7 @@ import { Loading } from "../../components/atoms/Loading";
 import { type GetServerSideProps } from "next";
 import { getSSGHelpers } from "../../utils/ssg";
 import { Checkbox } from "../../components/atoms/Checkbox";
+import { EditItem } from "../../components/atoms/EditItem";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -108,6 +109,13 @@ const ItemPage: React.FC = () => {
     });
   };
 
+  const handleConfirmEdit = (ref: RefObject<InputRef>) => () => {
+    const input = ref.current?.inputRef.current;
+    const parsedInput = ref.current?.validate(input?.value);
+    if (input && parsedInput) {
+      handleEdit(itemId, parsedInput);
+    }
+  };
   if (item.isLoading || !item.data) {
     return (
       <>
@@ -136,7 +144,6 @@ const ItemPage: React.FC = () => {
           items={item.data.todos}
           functions={{
             handleDelete,
-            confirmEdit: handleEdit,
           }}
           LeftExtraRender={(todo) => (
             <Checkbox
@@ -144,6 +151,13 @@ const ItemPage: React.FC = () => {
               onChange={handleCheck(todo.id)}
               id={todo.id}
               disabled={toastType === "loading"}
+            />
+          )}
+          EditItem={(item, setIsEditing) => (
+            <EditItem
+              confirmEdit={handleConfirmEdit}
+              item={item}
+              setIsEditing={setIsEditing}
             />
           )}
         />
