@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCreateToast, useToastAtom } from "../../hooks/atoms";
+import { useCreateToast } from "../../hooks/atoms";
 import { api } from "../../utils/api";
 import { faArrowLeftLong as faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -10,12 +10,12 @@ import { LayoutGroup } from "framer-motion";
 import { Loading } from "../../components/atoms/Loading";
 import { type GetServerSideProps } from "next";
 import { getSSGHelpers } from "../../utils/ssg";
-import { Checkbox } from "../../components/atoms/Checkbox";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import { CreateTodo } from "../../components/organisms/CreateTodo";
 import { EditTodo } from "../../components/molecules/EditTodo";
 import { AmountTag } from "../../components/atoms/AmountTag";
 import type { Todo } from "@prisma/client";
+import { CheckTodo } from "../../components/molecules/CheckTodo";
 
 export const getServerSideProps: GetServerSideProps<{
   itemId: string;
@@ -37,7 +37,6 @@ const ItemPage: React.FC = () => {
   const { itemId } = query as { itemId: string };
   const { loadingToast } = useCreateToast();
   const { onSuccess, onError } = useDefaultHandlers({ type: "todo", itemId });
-  const [{ type: toastType }] = useToastAtom();
 
   const todoList = api.todolists.get.useQuery(itemId, { onError });
 
@@ -46,24 +45,10 @@ const ItemPage: React.FC = () => {
     onError,
   });
 
-  const checkTodo = api.todo.check.useMutation({
-    onSuccess,
-    onError,
-  });
-
   const handleDelete = (id: string) => () => {
     loadingToast("Deleting...");
     deleteTodo.mutate(id);
   };
-
-  const handleCheck =
-    (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      loadingToast("Updating...");
-      checkTodo.mutate({
-        id,
-        done: e.target.checked,
-      });
-    };
 
   if (todoList.isLoading || !todoList.data) {
     return (
@@ -102,12 +87,7 @@ const ItemPage: React.FC = () => {
             handleDelete,
           }}
           LeftExtraRender={(todo) => (
-            <Checkbox
-              checked={todo.done}
-              onChange={handleCheck(todo.id)}
-              id={todo.id}
-              disabled={toastType === "loading"}
-            />
+            <CheckTodo id={todo.id} done={todo.done} todoListId={itemId} />
           )}
           RightExtraRender={getRightExtraRender}
           EditItem={(item, setIsEditing) => (

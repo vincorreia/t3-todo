@@ -1,5 +1,6 @@
+import type { Todo } from "@prisma/client";
 import { ICONS, PRIMARY_BUTTON_ACTION_CLASSES } from "../../consts";
-import { useCreateToast } from "../../hooks/atoms";
+import { useOptimisticUpdateTodo } from "../../hooks/useOptimisticUpdateTodo";
 import { api } from "../../utils/api";
 import { ActionButton } from "./ActionButton";
 import { Tag } from "./Tag";
@@ -11,45 +12,28 @@ type Props = {
 };
 
 export const AmountTag: React.FC<Props> = ({ amount, id, todoListId }) => {
-  const apiContext = api.useContext();
-  const { errorToast } = useCreateToast();
-  const mutation = api.todo.increaseOrDecrease.useMutation({
-    async onMutate(input) {
-      await apiContext.todolists.get.cancel(todoListId);
-
-      const previousValue = apiContext.todolists.get.getData(todoListId);
-
-      if (!previousValue) {
-        throw new Error("Invalid query");
-      }
-
-      const newValue = previousValue.todos.map((todo) => {
-        if (todo.id === id) {
-          if (todo.amount === null) {
-            throw new Error("Invalid query");
-          }
-          return {
-            ...todo,
-            amount: todo.amount + Number(input.amount),
-          };
+  const mapFunction =
+    (input: { id: string; amount: string }) => (todo: Todo) => {
+      if (todo.id === id) {
+        if (todo.amount === null) {
+          throw new Error("Invalid query");
         }
-        return todo;
-      });
+        return {
+          ...todo,
+          amount: todo.amount + Number(input.amount),
+        };
+      }
+      return todo;
+    };
+  const { onMutate, onSettled, onError } = useOptimisticUpdateTodo(
+    todoListId,
+    mapFunction
+  );
 
-      apiContext.todolists.get.setData(todoListId, {
-        ...previousValue,
-        todos: newValue,
-      });
-
-      return { previousValue };
-    },
-    onError(error, __input, context) {
-      apiContext.todolists.get.setData(todoListId, context?.previousValue);
-      errorToast(error.message);
-    },
-    onSettled() {
-      void apiContext.todolists.get.invalidate(todoListId);
-    },
+  const mutation = api.todo.increaseOrDecrease.useMutation({
+    onMutate,
+    onError,
+    onSettled,
   });
 
   if (!amount) {
