@@ -11,9 +11,13 @@ type ParamsTodo = {
   itemId: string;
 };
 
-type Params = ParamsTodolist | ParamsTodo;
+type Params = (ParamsTodolist | ParamsTodo) & { showDone?: boolean };
 
-export const useDefaultHandlers = ({ type, itemId }: Params) => {
+export const useDefaultHandlers = ({
+  type,
+  itemId,
+  showDone = true,
+}: Params) => {
   const { successToast, errorToast } = useCreateToast();
   const apiContext = api.useContext();
 
@@ -26,7 +30,7 @@ export const useDefaultHandlers = ({ type, itemId }: Params) => {
       await apiContext.todolists.get.invalidate(itemId);
     }
 
-    successToast("The data has been successfully updated!");
+    showDone && successToast("The data has been successfully updated!");
   };
 
   const onError = <DataType extends { message: string }>(error: DataType) => {

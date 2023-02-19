@@ -18,15 +18,23 @@ export const ActionButton: React.FC<Props> = ({
   disabled,
   type,
   active,
+  className,
   ...props
 }) => {
   const [{ type: toastType }] = useToastAtom();
   const isDisabled = disabled || toastType === "loading";
 
-  const classes = [props.className];
+  const classes = [];
+
+  if (className) {
+    classes.push(className);
+  }
 
   if (isDisabled) {
-    classes.push(DISABLED_CLASSES);
+    classes.push(
+      DISABLED_CLASSES,
+      "text-gray-600 hover:text-gray-600 active:text-gray-600"
+    );
   }
 
   if (active) {

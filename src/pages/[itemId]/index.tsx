@@ -78,7 +78,9 @@ const ItemPage: React.FC = () => {
 
   const getRightExtraRender =
     todoList.data.type === "SHOPPING_TODO"
-      ? (todo: Todo) => <AmountTag amount={todo.amount} />
+      ? (todo: Todo) => (
+          <AmountTag todoListId={itemId} id={todo.id} amount={todo.amount} />
+        )
       : undefined;
 
   return (
