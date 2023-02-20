@@ -14,6 +14,9 @@ module.exports = {
         jumping1: "jumping 2s ease-in 0.2s infinite",
         jumping2: "jumping 2s ease-in 0.3s infinite",
       },
+      fontSize: {
+        title: "clamp(1.5rem, 10vw, 6rem)",
+      },
     },
   },
   plugins: [],

@@ -1,7 +1,6 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import { useFormValidation } from "../molecules/FormValidationContext";
 import { Input } from "./Input";
-import { InputError } from "./InputError";
 import { InputWrapper } from "./InputWrapper";
 import { Label } from "./Label";
 
@@ -20,7 +19,7 @@ export const AmountField: React.FC<Props> = ({
   name,
   className,
 }) => {
-  const { error, setError } = useFormValidation(name);
+  const { setError } = useFormValidation(name);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newError = (() => {
@@ -51,7 +50,6 @@ export const AmountField: React.FC<Props> = ({
     <InputWrapper className={wrapperClasses.join(" ")}>
       <Label>Amount</Label>
       <Input onChange={onChange} pattern="[0-9]*" value={amount} />
-      {error && <InputError>{error}</InputError>}
     </InputWrapper>
   );
 };

@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   return (
     <>
       <HomeHead />
-      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+      <h1 className="text-title font-extrabold tracking-tight text-white sm:text-[5rem]">
         Lists
       </h1>
       <LayoutGroup>

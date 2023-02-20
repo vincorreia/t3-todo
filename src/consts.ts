@@ -4,6 +4,7 @@ import {
   faArrowUpRightFromSquare,
   faCartShopping,
   faCheck,
+  faCircleExclamation,
   faFileCircleCheck,
   faMinusCircle,
   faPlusCircle,
@@ -35,6 +36,7 @@ export const ICONS = {
   ACCESS: faArrowUpRightFromSquare,
   PLUS: faPlusCircle,
   MINUS: faMinusCircle,
+  ERROR: faCircleExclamation,
 };
 
 export const extrafield = {

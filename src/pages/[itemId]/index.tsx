@@ -56,12 +56,14 @@ const ItemPage: React.FC = () => {
       <Head>
         <title>{todoList.data.title}</title>
       </Head>
-      <Link href="/" className="absolute top-[5%] left-[10%]">
-        <FontAwesomeIcon icon={faArrowLeft} size="2x" />
-      </Link>
-      <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {todoList.data.title}
-      </h1>
+      <span className="w-full h-fit relative flex items-center justify-center">
+        <Link href="/" className="absolute left-8">
+          <FontAwesomeIcon icon={faArrowLeft} size="2x" />
+        </Link>
+        <h1 className="text-center text-title font-extrabold capitalize tracking-tight text-white">
+          {todoList.data.title}
+        </h1>
+      </span>
       <LayoutGroup>
         <CreateTodo itemId={itemId} type={todoList.data.type} />
         <Table
