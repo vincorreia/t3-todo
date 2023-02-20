@@ -1,11 +1,10 @@
 import { LayoutGroup } from "framer-motion";
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 import { Table } from "../components/organisms/Table";
 import { useCreateToast } from "../hooks/atoms";
 import { Loading } from "../components/atoms/Loading";
 import { api } from "../utils/api";
-import { getSSGHelpers } from "../utils/ssg";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tag } from "../components/atoms/Tag";
@@ -21,17 +20,6 @@ const HomeHead = () => {
       <link rel="icon" href="/favicon.ico" />
     </Head>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const ssg = await getSSGHelpers(req, res);
-
-  await ssg.todolists.getAll.prefetch();
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
-  };
 };
 
 const Home: NextPage = () => {
@@ -63,7 +51,7 @@ const Home: NextPage = () => {
   return (
     <>
       <HomeHead />
-      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+      <h1 className="text-title font-extrabold tracking-tight text-white sm:text-[5rem]">
         Lists
       </h1>
       <LayoutGroup>

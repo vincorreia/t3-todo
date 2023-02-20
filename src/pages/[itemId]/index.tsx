@@ -8,29 +8,12 @@ import Link from "next/link";
 import { Table } from "../../components/organisms/Table";
 import { LayoutGroup } from "framer-motion";
 import { Loading } from "../../components/atoms/Loading";
-import { type GetServerSideProps } from "next";
-import { getSSGHelpers } from "../../utils/ssg";
 import { useDefaultHandlers } from "../../hooks/useDefaultHandlers";
 import { CreateTodo } from "../../components/organisms/CreateTodo";
 import { EditTodo } from "../../components/molecules/EditTodo";
 import { AmountTag } from "../../components/atoms/AmountTag";
 import type { Todo } from "@prisma/client";
 import { CheckTodo } from "../../components/molecules/CheckTodo";
-
-export const getServerSideProps: GetServerSideProps<{
-  itemId: string;
-}> = async (context) => {
-  const ssg = await getSSGHelpers(context.req, context.res);
-  const itemId = context.params?.itemId as string;
-
-  await ssg.todolists.get.prefetch(itemId);
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      itemId,
-    },
-  };
-};
 
 const ItemPage: React.FC = () => {
   const { query } = useRouter();
@@ -73,12 +56,14 @@ const ItemPage: React.FC = () => {
       <Head>
         <title>{todoList.data.title}</title>
       </Head>
-      <Link href="/" className="absolute top-[5%] left-[10%]">
-        <FontAwesomeIcon icon={faArrowLeft} size="2x" />
-      </Link>
-      <h1 className="text-5xl font-extrabold capitalize tracking-tight text-white sm:text-[5rem]">
-        {todoList.data.title}
-      </h1>
+      <span className="w-full h-fit relative flex items-center justify-center">
+        <Link href="/" className="absolute left-8">
+          <FontAwesomeIcon icon={faArrowLeft} size="2x" />
+        </Link>
+        <h1 className="text-center text-title font-extrabold capitalize tracking-tight text-white">
+          {todoList.data.title}
+        </h1>
+      </span>
       <LayoutGroup>
         <CreateTodo itemId={itemId} type={todoList.data.type} />
         <Table

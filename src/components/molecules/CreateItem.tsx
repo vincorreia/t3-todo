@@ -13,6 +13,7 @@ import {
   useErrorExists,
   withFormValidation,
 } from "./FormValidationContext";
+import { FormErrors } from "../atoms/FormErrors";
 
 type Props = {
   handleCreateTodo: (ref: RefObject<InputRef | null>) => void | Promise<void>;
@@ -38,10 +39,6 @@ const CreateItem = ({
     setOpen((prev) => !prev);
     clearErrors();
   };
-
-  if (hasError) {
-    classes.push("pb-5");
-  }
 
   const [{ type: toastType }] = useToastAtom();
 
@@ -89,6 +86,7 @@ const CreateItem = ({
               />
               {ExtraFields}
             </span>
+            <FormErrors />
             <Button
               onClick={handleClickCreate}
               disabled={toastType === "loading"}

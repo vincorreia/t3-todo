@@ -70,6 +70,24 @@ export const useFormValidation = (name: string) => {
   };
 };
 
+export const useFormErrors = () => {
+  const context = React.useContext(FormValidationContext);
+  if (context === null) {
+    throw new Error(
+      "useFormErrors must be used within a FormValidationProvider"
+    );
+  }
+
+  const { errors } = context;
+
+  const errorArray = Object.entries(errors).filter(([, value]) => value) as [
+    string,
+    string
+  ][];
+
+  return errorArray;
+};
+
 export const useErrorExists = () => {
   const context = React.useContext(FormValidationContext);
   if (context === null) {
