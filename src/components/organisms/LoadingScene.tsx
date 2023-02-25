@@ -5,7 +5,7 @@ export const LoadingScene: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Loading...</title>
+        <title>T3 Todo</title>
       </Head>
       <Loading />
     </>
